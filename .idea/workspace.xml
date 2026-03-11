@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="martian-miner" targetName="martian-miner" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="fe1d1eb7-9515-4d3b-af67-8671e60cc3ba" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/assets/animations/bird_anim.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/animations/box.pix2d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/animations/box_anim.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/animations/bull_anim.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/spriteSheet.pix2d" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/spriteSheet.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Game.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ecs/EventManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ecs/World.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ecs/system/AnimationSystem.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ecs/system/CollisionSystem.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ecs/system/MovementSystem.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ecs/system/SpawnTimerSystem.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/managers/Scene.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/Vector2D.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/utils/Vector2D.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/bin/SDL3.dll" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_atomic.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_bits.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_copying.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_endian.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_haptic.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_init.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_intrin.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_loadso.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_locale.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_messagebox.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_misc.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_opengles.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_process.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_revision.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_system.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_test_assert.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_test_font.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_test_log.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_test_memory.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_video.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/include/SDL3/SDL_vulkan.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3-3.2.20/lib/cmake/SDL3/SDL3testTargets-release.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/vendor/SDL3_image-3.2.4/share/licenses/SDL3_image/LICENSE.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="1UOdx5Pm" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2025" />
+    <option name="minorVersion" value="3.1" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="3AoNHylxwC2Ag5msNssEANSfLo7" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "CMake Application.lecture8.executor": "Run",
+    "CMake Application.martian-miner.executor": "Run",
+    "CMake Application.martian_miner.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/wifir/Documents/C++/COMP-8052/martian-miner/src/vendor",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.first.attach.projects": "true",
+    "settings.editor.selected.configurable": "fileTemplates",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner\src\vendor" />
+      <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner" />
+      <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner\assets" />
+      <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner\src\ecs\system" />
+      <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner\src\utils" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="martian-miner" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="martian-miner" TARGET_NAME="martian-miner" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="martian-miner" RUN_TARGET_NAME="martian-miner">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="fe1d1eb7-9515-4d3b-af67-8671e60cc3ba" name="Changes" comment="" />
+      <created>1773254879233</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1773254879233</updated>
+      <workItem from="1773254882520" duration="3076000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+</project>
