@@ -77,6 +77,7 @@ World::World()
 
         if (player && wall) {
             auto& t = player->getComponent<Transform>();
+            auto& v = player->getComponent<Velocity>();
             auto& playerRect = player->getComponent<Collider>().rect;
             auto& wallRect   = wall->getComponent<Collider>().rect;
 
@@ -101,17 +102,28 @@ World::World()
             {
                 if (overlapX < overlapY)
                 {
-                    if (dx > 0)
+                    if (dx > 0) {
                         t.position.x += overlapX;
-                    else
+                        v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                        v.direction.x = 0;
+                        v.direction.y = 1;
+                    }
+                    else {
                         t.position.x -= overlapX;
+                        v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                        v.direction.x = 0;
+                        v.direction.y = 1;
+                    }
                 }
                 else
                 {
-                    if (dy > 0)
+                    if (dy > 0) {
                         t.position.y += overlapY;
-                    else
+                    }
+                    else {
                         t.position.y -= overlapY;
+                        v.direction.y = 0;
+                    }
                 }
 
                 playerRect.x = t.position.x;
