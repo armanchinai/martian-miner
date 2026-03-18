@@ -18,27 +18,27 @@ public:
     {
         for (auto& e : entities)
         {
-            if (e->hasComponent<Animation>() && e->hasComponent<Velocity>())
+            if (e->hasComponent<Animation>() && e->hasComponent<ForceInput>())
             {
                 auto& anim = e->getComponent<Animation>();
-                auto& vel = e->getComponent<Velocity>();
+                auto& fi = e->getComponent<ForceInput>();
 
                 //state system
                 std::string newClip;
 
-                if (vel.direction.x > 0.0f)
+                if (fi.inputPositional.x > 0.0f)
                 {
                     newClip = "walk_right";
                 }
-                else if (vel.direction.x < 0.0f)
+                else if (fi.inputPositional.x < 0.0f)
                 {
                     newClip = "walk_left";
                 }
-                else if (vel.direction.y > 0.0f)
+                else if (fi.inputPositional.y > 0.0f)
                 {
                     newClip = "walk_down";
                 }
-                else if (vel.direction.y < 0.0f)
+                else if (fi.inputPositional.y < 0.0f)
                 {
                     newClip = "walk_up";
                 }

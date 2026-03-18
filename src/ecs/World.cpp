@@ -119,10 +119,15 @@ World::World()
                 {
                     if (dy > 0) {
                         t.position.y += overlapY;
+                        v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
+                        v.direction.y = 0;
+                        v.direction.x = 1;
                     }
                     else {
                         t.position.y -= overlapY;
+                        v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
                         v.direction.y = 0;
+                        v.direction.x = 1;
                     }
                 }
 
