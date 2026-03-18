@@ -26,16 +26,16 @@ public:
                     switch (event.key.key)
                     {
                     case SDLK_W:
-                        fi.inputPositional.y = -1;
+                        fi.inputPositional.y = -100;
                         break;
                     case SDLK_S:
-                        fi.inputPositional.y = 1;
+                        fi.inputPositional.y = 100;
                         break;
                     case SDLK_A:
-                        fi.inputPositional.x = -1;
+                        fi.inputPositional.x = -100;
                         break;
                     case SDLK_D:
-                        fi.inputPositional.x = 1;
+                        fi.inputPositional.x = 100;
                         break;
                     default:
                         break;

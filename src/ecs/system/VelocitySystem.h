@@ -54,6 +54,10 @@ public:
             {
                 vel.direction = {0.0f, 0.0f};
             }
+
+            acc.magnitude = 0;
+            acc.direction.x = 0;
+            acc.direction.y = 0;
         }
     }
 };
