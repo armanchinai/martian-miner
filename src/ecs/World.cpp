@@ -106,13 +106,21 @@ World::World()
                         t.position.x += overlapX;
                         v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
                         v.direction.x = 0;
-                        v.direction.y = 1;
+                        if (v.direction.y < 0) {
+                            v.direction.y = -1;
+                        } else {
+                            v.direction.y = 1;
+                        }
                     }
                     else {
                         t.position.x -= overlapX;
                         v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
                         v.direction.x = 0;
-                        v.direction.y = 1;
+                        if (v.direction.y < 0) {
+                            v.direction.y = -1;
+                        } else {
+                            v.direction.y = 1;
+                        }
                     }
                 }
                 else
@@ -121,13 +129,21 @@ World::World()
                         t.position.y += overlapY;
                         v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
                         v.direction.y = 0;
-                        v.direction.x = 1;
+                        if (v.direction.x < 0) {
+                            v.direction.x = -1;
+                        } else {
+                            v.direction.x = 1;
+                        }
                     }
                     else {
                         t.position.y -= overlapY;
                         v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
                         v.direction.y = 0;
-                        v.direction.x = 1;
+                        if (v.direction.x < 0) {
+                            v.direction.x = -1;
+                        } else {
+                            v.direction.x = 1;
+                        }
                     }
                 }
 
