@@ -53,6 +53,9 @@ Scene::Scene(const char* sceneName, const char* mapPath, int windowWidth, int wi
     const auto& playerT = player.addComponent<Transform>(Vector2D(0.0f,0.0f), 0.0f, 1.0f);
 
     player.addComponent<Velocity>(Vector2D(0.0f, 0.0f), 200.0f);
+    player.addComponent<Acceleration>(Vector2D(0.0f, 0.0f));
+    player.addComponent<PhysicsObject>();
+    player.addComponent<ForceInput>();
 
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);

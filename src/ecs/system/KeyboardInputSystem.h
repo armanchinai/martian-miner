@@ -18,24 +18,24 @@ public:
     {
         for (auto& e : entities)
         {
-            if (e->hasComponent<Velocity>() && e->hasComponent<PlayerTag>())
+            if (e->hasComponent<ForceInput>() && e->hasComponent<PlayerTag>())
             {
-                auto& v = e->getComponent<Velocity>();
+                auto& fi = e->getComponent<ForceInput>();
                 if (event.type == SDL_EVENT_KEY_DOWN)
                 {
                     switch (event.key.key)
                     {
                     case SDLK_W:
-                        v.direction.y = -1;
+                        fi.inputPositional.y = -1;
                         break;
                     case SDLK_S:
-                        v.direction.y = 1;
+                        fi.inputPositional.y = 1;
                         break;
                     case SDLK_A:
-                        v.direction.x = -1;
+                        fi.inputPositional.x = -1;
                         break;
                     case SDLK_D:
-                        v.direction.x = 1;
+                        fi.inputPositional.x = 1;
                         break;
                     default:
                         break;
@@ -46,16 +46,16 @@ public:
                     switch (event.key.key)
                     {
                     case SDLK_W:
-                        v.direction.y = 0;
+                        fi.inputPositional.y = 0;
                         break;
                     case SDLK_S:
-                        v.direction.y = 0;
+                        fi.inputPositional.y = 0;
                         break;
                     case SDLK_A:
-                        v.direction.x = 0;
+                        fi.inputPositional.x = 0;
                         break;
                     case SDLK_D:
-                        v.direction.x = 0;
+                        fi.inputPositional.x = 0;
                         break;
                     default:
                         break;

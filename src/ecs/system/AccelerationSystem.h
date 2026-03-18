@@ -1,0 +1,65 @@
+//
+// Created by arman on 2026-03-17.
+//
+
+#ifndef MARTIAN_MINER_ACCELERATIONSYSTEM_H
+#define MARTIAN_MINER_ACCELERATIONSYSTEM_H
+#include <cmath>
+#include <memory>
+#include <vector>
+
+#include "Component.h"
+#include "Entity.h"
+
+class AccelerationSystem
+{
+public:
+    void update(const std::vector<std::unique_ptr<Entity>>& entities)
+    {
+        for (auto& entity : entities)
+        {
+            if (!entity->hasComponent<Acceleration>() ||
+                !entity->hasComponent<PhysicsObject>() ||
+                !entity->hasComponent<ForceInput>())
+                continue;
+
+            auto& acc = entity->getComponent<Acceleration>();
+            auto& phys = entity->getComponent<PhysicsObject>();
+            auto& input = entity->getComponent<ForceInput>();
+
+            // get total force
+            Vector2D totalForce{0.0f, 0.0f};
+
+            totalForce.x += input.inputPositional.x;
+            totalForce.y += input.inputPositional.y;
+
+            if (phys.isGravityEnabled)
+            {
+                totalForce.y += phys.mass * phys.gravity;
+            }
+
+            // convert to acceleration
+            Vector2D accelVec;
+
+            accelVec.x = totalForce.x / phys.mass;
+            accelVec.y = totalForce.y / phys.mass;
+
+            // convert to magnitude and direction
+            float mag = std::sqrt(accelVec.x * accelVec.x + accelVec.y * accelVec.y);
+
+            acc.magnitude = mag;
+
+            if (mag > 0.0001f)
+            {
+                acc.direction.x = accelVec.x / mag;
+                acc.direction.y = accelVec.y / mag;
+            }
+            else
+            {
+                acc.direction = {0.0f, 0.0f};
+            }
+        }
+    }
+};
+
+#endif //MARTIAN_MINER_ACCELERATIONSYSTEM_H

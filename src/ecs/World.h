@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "AccelerationSystem.h"
 #include "AnimationSystem.h"
 #include "CameraSystem.h"
 #include "CollisionSystem.h"
@@ -18,6 +19,7 @@
 #include "MovementSystem.h"
 #include "RenderSystem.h"
 #include "SpawnTimerSystem.h"
+#include "VelocitySystem.h"
 
 class World
 {
@@ -33,11 +35,15 @@ class World
     CameraSystem cameraSystem;
     SpawnTimerSystem spawnTimerSystem;
     DestructionSystem destructionSystem;
+    AccelerationSystem accelerationSystem;
+    VelocitySystem velocitySystem;
 public:
     World();
     void update(const float deltaTime, const SDL_Event event)
     {
         keyboardInputSystem.update(entities, event);
+        accelerationSystem.update(entities);
+        velocitySystem.update(entities, deltaTime);
         movementSystem.update(entities, deltaTime);
         collisionSystem.update(*this);
         animationSystem.update(entities, deltaTime);

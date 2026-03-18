@@ -19,10 +19,26 @@ struct Transform
     Vector2D prevPosition{};
 };
 
+struct Acceleration {
+    Vector2D direction{};
+    float magnitude{};
+};
+
+struct PhysicsObject {
+    float mass = 1.0f;
+    float gravity = 9.87f;
+    bool isGravityEnabled = true;
+};
+
+struct ForceInput {
+    Vector2D inputPositional;
+    float inputAngular;
+};
+
 struct Velocity
 {
     Vector2D direction{};
-    float speed{};
+    float magnitude{};
 };
 
 struct Sprite

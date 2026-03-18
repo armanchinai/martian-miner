@@ -30,7 +30,7 @@ public:
                 }
 
                 v.direction.normalize();
-                Vector2D velocityVector = v.direction * v.speed;
+                Vector2D velocityVector = v.direction * v.magnitude;
                 t.position += velocityVector * deltaTime;
             }
         }
