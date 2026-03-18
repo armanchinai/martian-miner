@@ -60,7 +60,7 @@ Scene::Scene(const char* sceneName, const char* mapPath, int windowWidth, int wi
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
 
-    SDL_Texture* tex = TextureManager::load("../assets/animations/box_anim.png");
+    SDL_Texture* tex = TextureManager::load("../assets/animations/lander1.png");
     SDL_FRect playerSrc = anim.clips[anim.currentClip].frameIndices[0];
     SDL_FRect playerDst {playerT.position.x, playerT.position.y, 64, 64};
     player.addComponent<Sprite>(tex, playerSrc, playerDst);

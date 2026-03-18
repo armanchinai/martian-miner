@@ -26,21 +26,29 @@ public:
                 //state system
                 std::string newClip;
 
-                if (fi.inputPositional.x > 0.0f)
+                if (fi.inputPositional.x > 0.0f && fi.inputPositional.y < 0.0f)
                 {
-                    newClip = "walk_right";
+                    newClip = "upAndRight";
+                }
+                else if (fi.inputPositional.x < 0.0f && fi.inputPositional.y < 0.0f)
+                {
+                    newClip = "upAndLeft";
+                }
+                else if (fi.inputPositional.x > 0.0f)
+                {
+                    newClip = "right";
                 }
                 else if (fi.inputPositional.x < 0.0f)
                 {
-                    newClip = "walk_left";
+                    newClip = "left";
                 }
                 else if (fi.inputPositional.y > 0.0f)
                 {
-                    newClip = "walk_down";
+                    newClip = "idle";
                 }
                 else if (fi.inputPositional.y < 0.0f)
                 {
-                    newClip = "walk_up";
+                    newClip = "up";
                 }
                 else
                 {
