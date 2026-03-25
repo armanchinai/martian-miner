@@ -12,7 +12,10 @@ void collisionEventListener2 (const CollisionEvent collision)
     {
         auto& colA = collision.entityA->getComponent<Collider>();
         auto& colB = collision.entityB->getComponent<Collider>();
-        std::cout << "A collision occured between entityA (" << colA.tag << ") and entityB (" << colB.tag << ")." << std::endl;
+        if (colA.tag != "wall" || colB.tag != "wall")
+        {
+            std::cout << "A collision occured between entityA (" << colA.tag << ") and entityB (" << colB.tag << ")." << std::endl;
+        }
     }
 }
 

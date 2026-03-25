@@ -15,7 +15,8 @@ class Scene
 public:
     World world;
 
-    Scene(const char* sceneName, const char* mapPath, int windowWidth, int windowHeight);
+    Scene(const char* sceneName, int windowWidth, int windowHeight, const char* mapPath, const char* spriteSheetPath, std::vector<SDL_Rect> tileMappings);
+    Scene(const char* sceneName, int windowWidth, int windowHeight);
 
     const std::string& getName() const
     {
@@ -33,6 +34,8 @@ public:
     }
 private:
     std::string name;
+    int width;
+    int height;
     void createProjectile(Vector2D position, Vector2D direction, float speed);
 };
 

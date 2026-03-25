@@ -16,10 +16,11 @@ public:
     Map();
     ~Map();
 
-    void load(const char* path, SDL_Texture *ts);
+    void load(const char* path, SDL_Texture* spriteSheet, std::vector<SDL_Rect> mappings);
     void draw(const Camera& camera) const;
 
-    SDL_Texture *tileset = nullptr;
+    SDL_Texture *tileTextures = nullptr;
+    std::vector<SDL_Rect> tileMappings;
     int width{}, height{};
     std::vector<Collider> colliders;
     std::vector<Vector2D> itemLocations;

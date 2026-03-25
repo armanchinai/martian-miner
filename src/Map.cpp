@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <utility>
 
 #include "managers/TextureManager.h"
 #include "tinyxml2.h"
@@ -15,9 +16,10 @@ Map::Map() = default;
 
 Map::~Map() = default;
 
-void Map::load(const char* path, SDL_Texture *ts)
+void Map::load(const char* path, SDL_Texture *spriteSheet, std::vector<SDL_Rect> mappings)
 {
-    tileset = ts;
+    this->tileTextures = spriteSheet;
+    this->tileMappings = std::move(mappings);
     tinyxml2::XMLDocument document;
     document.LoadFile(path);
 
@@ -108,33 +110,16 @@ void Map::draw(const Camera& camera) const
             dst.x = std::round(worldX - camera.view.x);
             dst.y = std::round(worldY - camera.view.y);
 
-            switch (type)
+            if (this->tileMappings.size() <= type)
             {
-                case 1:
-                    src.x = 0;
-                    src.y = 0;
-                    src.w = src.h = 32;
-                    break;
-                case 2:
-                    src.x = 32;
-                    src.y = 0;
-                    src.w = src.h = 32;
-                    break;
-                case 3:
-                    src.x = 0;
-                    src.y = 32;
-                    src.w = src.h = 32;
-                    break;
-                case 4:
-                    src.x = 32;
-                    src.y = 32;
-                    src.w = src.h = 32;
-                    break;
-                default:
-                    break;
+                auto mapping = this->tileMappings[type - 1];
+                src.x = mapping.x;
+                src.y = mapping.y;
+                src.w = mapping.w;
+                src.h = mapping.h;
             }
 
-            TextureManager::draw(tileset, src, dst);
+            TextureManager::draw(tileTextures, src, dst);
         }
     }
 }

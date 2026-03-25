@@ -57,7 +57,9 @@ add_executable(martian-miner src/main.cpp
         src/managers/Scene.cpp
         src/managers/SceneManager.h
         src/ecs/system/AccelerationSystem.h
-        src/ecs/system/VelocitySystem.h)
+        src/ecs/system/VelocitySystem.h
+        src/scenes/LandingScene.cpp
+        src/scenes/LandingScene.h)
 
 target_link_libraries(martian-miner
         SDL3

@@ -13,7 +13,7 @@
 struct SceneParameters
 {
     const char* name;
-    const char* mapPath;
+    std::function<std::unique_ptr<Scene>()> factory;
     int windowWidth;
     int windowHeight;
 };
@@ -28,20 +28,29 @@ class SceneManager
         if (const auto it = sceneParameters.find(sceneName); it != sceneParameters.end())
         {
             const auto& parameters = it->second;
-            currentScene = std::make_unique<Scene>(parameters.name, parameters.mapPath, parameters.windowWidth, parameters.windowHeight);
+            currentScene = parameters.factory();   // ← constructs correct SceneType
         }
         else
         {
-            std::cerr << "Scene with name '" << sceneName << "' could not be found!" << std::endl;
+            std::cerr << "Scene with name '" << sceneName << "' could not be found!\n";
         }
     }
 public:
     std::unique_ptr<Scene> currentScene;
 
-    void loadScene(const char* sceneName, const char* mapPath, const int windowWidth, const int windowHeight)
+    template <typename SceneType>
+    void loadScene(const char* sceneName, int windowWidth, int windowHeight)
     {
-        sceneParameters[sceneName] = {sceneName, mapPath, windowWidth, windowHeight};
+        sceneParameters[sceneName] = {
+            sceneName,
+            [=]() {
+                return std::make_unique<SceneType>(sceneName, windowWidth, windowHeight);
+            },
+            windowWidth,
+            windowHeight
+        };
     }
+
 
     void changeSceneDeferred(const std::string sceneName)
     {

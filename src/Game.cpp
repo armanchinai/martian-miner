@@ -9,6 +9,7 @@
 #include <ostream>
 
 #include "managers/AssetManager.h"
+#include "scenes/LandingScene.h"
 
 std::function<void(std::string)> Game::onSceneChangeRequest;
 
@@ -63,9 +64,8 @@ void Game::init(const char* title, const int width, const int height, const bool
     AssetManager::loadAnimation("enemy", "../assets/animations/bird_animations.xml");
 
     // Load Scenes
-    sceneManager.loadScene("level1", "../assets/map1.tmx", width, height);
-    sceneManager.loadScene("level2", "../assets/map2.tmx", width, height);
-    sceneManager.changeSceneDeferred("level1");
+    sceneManager.loadScene<LandingScene>("game", width, height);
+    sceneManager.changeSceneDeferred("game");
 
     onSceneChangeRequest = [this](const std::string& sceneName)
     {
