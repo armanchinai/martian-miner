@@ -5,6 +5,7 @@
 #ifndef MARTIAN_MINER_ACCELERATIONSYSTEM_H
 #define MARTIAN_MINER_ACCELERATIONSYSTEM_H
 #include <cmath>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -30,13 +31,23 @@ public:
             // get total force
             Vector2D totalForce{0.0f, 0.0f};
 
-            totalForce.x += input.inputPositional.x;
-            totalForce.y += input.inputPositional.y;
+            float cosA = std::cos((phys.angle * std::numbers::pi)/180);
+            float sinA = std::sin((phys.angle * std::numbers::pi)/180);
+
+            Vector2D rotatedInput;
+            rotatedInput.x = input.inputPositional.x * cosA - input.inputPositional.y * sinA;
+            rotatedInput.y = input.inputPositional.x * sinA + input.inputPositional.y * cosA;
+
+            totalForce += rotatedInput;
 
             if (phys.isGravityEnabled)
             {
                 totalForce.y += phys.mass * phys.gravity;
             }
+
+            // std::cout << "Input: " << input.inputPositional.x << " " << input.inputPositional.y << std::endl;
+            // std::cout << "Rotational: " << rotatedInput.x<<" "<<rotatedInput.y<< std::endl;
+            // std::cout << "TotalForce: " << totalForce.x << " " << totalForce.y << std::endl;
 
             // convert to acceleration
             Vector2D accelVec;

@@ -39,9 +39,15 @@ SDL_Texture* TextureManager::load(const char* path)
     return texture;
 }
 
-void TextureManager::draw(SDL_Texture* texture, SDL_FRect src, SDL_FRect dst)
-{
+void TextureManager::draw(SDL_Texture* texture, SDL_FRect src, SDL_FRect dst) {
     SDL_RenderTexture(game->renderer, texture, &src, &dst);
+}
+
+
+void TextureManager::draw(SDL_Texture* texture, SDL_FRect src, SDL_FRect dst, float angle=0)
+{
+    SDL_FPoint center = { dst.w / 2.0f, dst.h / 2.0f };
+    SDL_RenderTextureRotated(game->renderer, texture, &src, &dst, angle, &center, SDL_FLIP_NONE);
 }
 
 void TextureManager::clean()
