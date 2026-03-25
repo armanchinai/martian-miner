@@ -35,8 +35,10 @@ public:
             float sinA = std::sin((phys.angle * std::numbers::pi)/180);
 
             Vector2D rotatedInput;
-            rotatedInput.x = input.inputPositional.x * cosA - input.inputPositional.y * sinA;
-            rotatedInput.y = input.inputPositional.x * sinA + input.inputPositional.y * cosA;
+            // rotatedInput.x = input.inputPositional.x * cosA - input.inputPositional.y * sinA;
+            // rotatedInput.y = input.inputPositional.x * sinA + input.inputPositional.y * cosA;
+            rotatedInput.x = - input.inputPositional.y * sinA;
+            rotatedInput.y = + input.inputPositional.y * cosA;
 
             totalForce += rotatedInput;
 
