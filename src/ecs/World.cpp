@@ -23,18 +23,16 @@ World::World()
 {
     eventManager.subscribe([this](const CollisionEvent collision)
     {
-        Entity* sceneStateEntity = nullptr;
-
-        for (auto& entity : entities)
-        {
-            if (entity->hasComponent<SceneState>())
-            {
-                sceneStateEntity = entity.get();
-                break;
-            }
-        }
-
-        if (!sceneStateEntity) return;
+        // Entity* sceneStateEntity = nullptr;
+        //
+        // for (auto& entity : entities)
+        // {
+        //     if (entity->hasComponent<SceneState>())
+        //     {
+        //         sceneStateEntity = entity.get();
+        //         break;
+        //     }
+        // }
 
         if (collision.entityA == nullptr || collision.entityB == nullptr) { return; }
         if (!(collision.entityA->hasComponent<Collider>() && collision.entityB->hasComponent<Collider>())) { return; }
@@ -54,17 +52,6 @@ World::World()
         {
             player = collision.entityB;
             item = collision.entityA;
-        }
-
-        if (player && item)
-        {
-            item->destroy();
-            auto& sceneState = sceneStateEntity->getComponent<SceneState>();
-            sceneState.coinsCollected++;
-            if (sceneState.coinsCollected > 1)
-            {
-                Game::onSceneChangeRequest("level2");
-            }
         }
 
         if (colA.tag == "player" && colB.tag == "wall")

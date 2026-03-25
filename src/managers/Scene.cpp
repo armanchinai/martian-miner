@@ -26,7 +26,7 @@ Scene::Scene(const char* sceneName, const int windowWidth, const int windowHeigh
         SDL_Texture* colTex = TextureManager::load("../assets/spriteSheet.png");
         SDL_FRect colTexSrc = {1, 33, 30, 30};
         SDL_FRect colTexDst = {c.rect.x, c.rect.y, c.rect.w, c.rect.h};
-        e.addComponent<Sprite>(colTex, colTexSrc, colTexDst);
+        //e.addComponent<Sprite>(colTex, colTexSrc, colTexDst);
     }
 
     auto& camera(world.createEntity());

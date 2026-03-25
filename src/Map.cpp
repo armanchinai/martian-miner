@@ -110,13 +110,14 @@ void Map::draw(const Camera& camera) const
             dst.x = std::round(worldX - camera.view.x);
             dst.y = std::round(worldY - camera.view.y);
 
-            if (this->tileMappings.size() <= type)
+            if (this->tileMappings.size() >= type)
             {
                 auto mapping = this->tileMappings[type - 1];
                 src.x = mapping.x;
                 src.y = mapping.y;
                 src.w = mapping.w;
                 src.h = mapping.h;
+                //std::cout << type << ": " << src.x << ", " << src.y << ", " << src.w << ", " << src.h << std::endl;
             }
 
             TextureManager::draw(tileTextures, src, dst);
