@@ -5,6 +5,7 @@
 #ifndef MARTIAN_MINER_ACCELERATIONSYSTEM_H
 #define MARTIAN_MINER_ACCELERATIONSYSTEM_H
 #include <cmath>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -14,7 +15,7 @@
 class AccelerationSystem
 {
 public:
-    void update(const std::vector<std::unique_ptr<Entity>>& entities)
+    void update(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime)
     {
         for (auto& entity : entities)
         {
@@ -30,8 +31,14 @@ public:
             // get total force
             Vector2D totalForce{0.0f, 0.0f};
 
-            totalForce.x += input.inputPositional.x;
-            totalForce.y += input.inputPositional.y;
+            float cosA = std::cos((phys.angle * std::numbers::pi)/180);
+            float sinA = std::sin((phys.angle * std::numbers::pi)/180);
+
+            Vector2D rotatedInput;
+            rotatedInput.x = input.inputPositional.x * cosA - input.inputPositional.y * sinA;
+            rotatedInput.y = input.inputPositional.x * sinA + input.inputPositional.y * cosA;
+
+            totalForce += rotatedInput;
 
             if (phys.isGravityEnabled)
             {
@@ -48,6 +55,8 @@ public:
             float mag = std::sqrt(accelVec.x * accelVec.x + accelVec.y * accelVec.y);
 
             acc.magnitude = mag;
+
+            phys.angle += input.inputPositional.x * deltaTime;
 
             if (mag > 0.0001f)
             {

@@ -28,11 +28,12 @@ struct PhysicsObject {
     float mass = 1.0f;
     float gravity = 9.87f;
     bool isGravityEnabled = true;
+    float angle = 0.0f;
 };
 
 struct ForceInput {
     Vector2D inputPositional;
-    float inputAngular;
+    float inputAngular{};
 };
 
 struct Velocity

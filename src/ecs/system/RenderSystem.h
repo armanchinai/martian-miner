@@ -44,7 +44,12 @@ public:
                     sprite.src = anim.clips[anim.currentClip].frameIndices[anim.currentFrame];
                 }
 
-                TextureManager::draw(sprite.texture, sprite.src, sprite.dst);
+                if (entity->hasComponent<PhysicsObject>()) {
+                    auto& phys = entity->getComponent<PhysicsObject>();
+                    TextureManager::draw(sprite.texture, sprite.src, sprite.dst, phys.angle);
+                } else {
+                    TextureManager::draw(sprite.texture, sprite.src, sprite.dst);
+                }
             }
         }
     }

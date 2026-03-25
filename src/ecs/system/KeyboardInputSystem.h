@@ -28,9 +28,6 @@ public:
                     case SDLK_W:
                         fi.inputPositional.y = -100;
                         break;
-                    case SDLK_S:
-                        fi.inputPositional.y = 100;
-                        break;
                     case SDLK_A:
                         fi.inputPositional.x = -100;
                         break;
@@ -48,14 +45,13 @@ public:
                     case SDLK_W:
                         fi.inputPositional.y = 0;
                         break;
-                    case SDLK_S:
-                        fi.inputPositional.y = 0;
-                        break;
                     case SDLK_A:
                         fi.inputPositional.x = 0;
+                            fi.inputAngular = 0;
                         break;
                     case SDLK_D:
                         fi.inputPositional.x = 0;
+                            fi.inputAngular = 0;
                         break;
                     default:
                         break;

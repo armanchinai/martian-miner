@@ -42,7 +42,7 @@ public:
     void update(const float deltaTime, const SDL_Event event)
     {
         keyboardInputSystem.update(entities, event);
-        accelerationSystem.update(entities);
+        accelerationSystem.update(entities, deltaTime);
         velocitySystem.update(entities, deltaTime);
         movementSystem.update(entities, deltaTime);
         collisionSystem.update(*this);
