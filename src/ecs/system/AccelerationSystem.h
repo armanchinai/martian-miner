@@ -15,7 +15,7 @@
 class AccelerationSystem
 {
 public:
-    void update(const std::vector<std::unique_ptr<Entity>>& entities)
+    void update(const std::vector<std::unique_ptr<Entity>>& entities, float deltaTime)
     {
         for (auto& entity : entities)
         {
@@ -45,10 +45,6 @@ public:
                 totalForce.y += phys.mass * phys.gravity;
             }
 
-            // std::cout << "Input: " << input.inputPositional.x << " " << input.inputPositional.y << std::endl;
-            // std::cout << "Rotational: " << rotatedInput.x<<" "<<rotatedInput.y<< std::endl;
-            // std::cout << "TotalForce: " << totalForce.x << " " << totalForce.y << std::endl;
-
             // convert to acceleration
             Vector2D accelVec;
 
@@ -59,6 +55,8 @@ public:
             float mag = std::sqrt(accelVec.x * accelVec.x + accelVec.y * accelVec.y);
 
             acc.magnitude = mag;
+
+            phys.angle += input.inputPositional.x * deltaTime;
 
             if (mag > 0.0001f)
             {

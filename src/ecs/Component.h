@@ -28,7 +28,7 @@ struct PhysicsObject {
     float mass = 1.0f;
     float gravity = 9.87f;
     bool isGravityEnabled = true;
-    float angle = 180.0f;
+    float angle = 0.0f;
 };
 
 struct ForceInput {
