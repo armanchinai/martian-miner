@@ -43,6 +43,7 @@ World::World()
         Entity* item = nullptr;
         Entity* wall = nullptr;
         Entity* projectile = nullptr;
+        Entity* landingZone = nullptr;
         if (colA.tag == "player" && colB.tag == "item")
         {
             player = collision.entityA;
@@ -157,6 +158,22 @@ World::World()
         {
             player->destroy();
             Game::onSceneChangeRequest("gameover");
+        }
+
+        if (colA.tag == "player" && colB.tag == "landingZone")
+        {
+            player = collision.entityA;
+            landingZone = collision.entityB;
+        }
+        else if (colB.tag == "player" && colA.tag == "landingZone")
+        {
+            player = collision.entityB;
+            landingZone = collision.entityA;
+        }
+
+        if (player && landingZone)
+        {
+            // Do something...
         }
     });
 

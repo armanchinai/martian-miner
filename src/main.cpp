@@ -33,7 +33,7 @@ int main()
     float deltaTime = 0.0f;
 
     game = new Game();
-    game->init("Martian Miner", 60 * 16, 40 * 16, false);
+    game->init("Martian Miner", 1200, 900, false);
     while (game->running())
     {
         const Uint64 currentTicks = SDL_GetTicks();

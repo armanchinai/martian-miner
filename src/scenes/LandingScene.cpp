@@ -59,36 +59,37 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
 
     auto& leftBarrier(world.createEntity());
     leftBarrier.addComponent<Transform>(Vector2D(-20.f, 0), 0.0f, 1.0f);
-    auto& lCol = leftBarrier.addComponent<Collider>("wall");
+    auto& lCol = leftBarrier.addComponent<Collider>("barrier");
     lCol.rect.w = 20.0f;
     lCol.rect.h = world.getMap().height * world.getMap().tileHeight;
 
     auto& rightBarrier(world.createEntity());
     rightBarrier.addComponent<Transform>(Vector2D(world.getMap().width * world.getMap().tileWidth, 0), 0.0f, 1.0f);
-    auto& rCol = rightBarrier.addComponent<Collider>("wall");
+    auto& rCol = rightBarrier.addComponent<Collider>("barrier");
     rCol.rect.w = 20.0f;
     rCol.rect.h = world.getMap().height * world.getMap().tileHeight;
 
     auto& topBarrier(world.createEntity());
     topBarrier.addComponent<Transform>(Vector2D(0, -21), 0.0f, 1.0f);
-    auto& tCol = topBarrier.addComponent<Collider>("wall");
+    auto& tCol = topBarrier.addComponent<Collider>("barrier");
     tCol.rect.h = 20.0f;
     tCol.rect.w = world.getMap().width * world.getMap().tileWidth;
 
     auto& bottomBarrier(world.createEntity());
     bottomBarrier.addComponent<Transform>(Vector2D(0, world.getMap().height * world.getMap().tileHeight + 1), 0.0f, 1.0f);
-    auto& bCol = bottomBarrier.addComponent<Collider>("wall");
+    auto& bCol = bottomBarrier.addComponent<Collider>("barrier");
     bCol.rect.h = 20.0f;
     bCol.rect.w = world.getMap().width * world.getMap().tileWidth;
 
     auto& player(world.createEntity());
     player.addComponent<PlayerTag>();
 
-    const auto& playerT = player.addComponent<Transform>(Vector2D(0.0f,0.0f), 0.0f, 1.0f);
+    const auto& playerT = player.addComponent<Transform>(Vector2D(world.getMap().width * world.getMap().tileWidth / 2,10.0f), 0.0f, 1.0f);
 
-    player.addComponent<Velocity>(Vector2D(0.0f, 0.0f), 200.0f);
+    player.addComponent<Velocity>(Vector2D(-0.25f, 0.75f), 200.0f);
     player.addComponent<Acceleration>(Vector2D(0.0f, 0.0f));
-    player.addComponent<PhysicsObject>();
+    auto& physObj = player.addComponent<PhysicsObject>();
+    physObj.angle = 45.0f;
     player.addComponent<ForceInput>();
 
     Animation anim = AssetManager::getAnimation("player");
@@ -137,7 +138,7 @@ SDL_FColor LandingScene::getBackgroundColour()
     {
         constexpr SDL_FColor skyColour = {0.1f, 0.0f, 0.2f, 1.0f};
         constexpr SDL_FColor groundColour = {0.95f, 0.80f, 0.55f, 1.0f};
-        constexpr SDL_FColor underGroundColour = {0.40f, 0.30f, 0.20f, 1.0f};
+        constexpr SDL_FColor underGroundColour = {0.16f, 0.0f, 0.01f, 1.0f};
 
         const auto& playerTransform = playerEntity->getComponent<Transform>();
         const auto& camera = cameraEntity->getComponent<Camera>();
