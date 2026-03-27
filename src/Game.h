@@ -31,6 +31,4 @@ private:
 	SDL_Window* window = nullptr;
 	SDL_Event event;
 	SceneManager sceneManager;
-
-	Uint8 r, g, b, a;
 };

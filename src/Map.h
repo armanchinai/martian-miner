@@ -24,6 +24,7 @@ public:
     int width{}, height{};
     std::vector<Collider> colliders;
     std::vector<Vector2D> itemLocations;
+    std::vector<SDL_FRect> landingZones;
     std::vector<std::vector<int>> tileData;
 };
 

@@ -90,6 +90,18 @@ void Map::load(const char* path, SDL_Texture *spriteSheet, std::vector<SDL_Rect>
                 itemLocations.push_back(pos);
             }
         }
+        else if (std::strcmp(name, "LandingZoneLayer") == 0)
+        {
+            for (
+                auto* object = nextGroup->FirstChildElement("object");
+                object != nullptr;
+                object = object->NextSiblingElement("object")
+                )
+            {
+                SDL_FRect zone = {object->FloatAttribute("x"), object->FloatAttribute("y"), object->FloatAttribute("width"), object->FloatAttribute("height")};
+                landingZones.push_back(zone);
+            }
+        }
     }
 }
 
@@ -118,9 +130,12 @@ void Map::draw(const Camera& camera) const
                 src.w = mapping.w;
                 src.h = mapping.h;
                 //std::cout << type << ": " << src.x << ", " << src.y << ", " << src.w << ", " << src.h << std::endl;
+                TextureManager::draw(tileTextures, src, dst);
             }
-
-            TextureManager::draw(tileTextures, src, dst);
+            else //if (type != 0)
+            {
+                TextureManager::draw(TextureManager::load("../assets/gizmos.png"), {65, 1, 30, 30}, dst);
+            }
         }
     }
 }

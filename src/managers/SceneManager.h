@@ -28,7 +28,7 @@ class SceneManager
         if (const auto it = sceneParameters.find(sceneName); it != sceneParameters.end())
         {
             const auto& parameters = it->second;
-            currentScene = parameters.factory();   // ← constructs correct SceneType
+            currentScene = parameters.factory();
         }
         else
         {
@@ -51,6 +51,10 @@ public:
         };
     }
 
+    SDL_FColor getBackgroundColour() const
+    {
+        return currentScene->getBackgroundColour();
+    }
 
     void changeSceneDeferred(const std::string sceneName)
     {

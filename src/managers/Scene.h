@@ -32,11 +32,15 @@ public:
     {
         world.render();
     }
+
+    virtual SDL_FColor getBackgroundColour() { return {0.0f, 0.0f, 0.0f, 255.0f}; }
+
 private:
     std::string name;
     int width;
     int height;
     void createProjectile(Vector2D position, Vector2D direction, float speed);
+    SDL_FColor background{};
 };
 
 #endif //LECTURE8_SCENE_H

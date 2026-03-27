@@ -109,7 +109,8 @@ void Game::update(const float deltaTime)
 
 void Game::render()
 {
-    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+    auto [r, g, b, a] = sceneManager.getBackgroundColour();
+    SDL_SetRenderDrawColorFloat(renderer, r, g, b, a);
     SDL_RenderClear(renderer);
 
     sceneManager.render();
