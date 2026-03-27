@@ -33,6 +33,8 @@ void Map::load(const char* path, SDL_Texture *spriteSheet, std::vector<SDL_Rect>
 
     width = mapNode->IntAttribute("width");
     height = mapNode->IntAttribute("height");
+    tileWidth = mapNode->IntAttribute("tilewidth");
+    tileHeight = mapNode->IntAttribute("tileheight");
 
     auto* layer = mapNode->FirstChildElement("layer");
     auto* data = layer->FirstChildElement("data");

@@ -22,6 +22,7 @@ public:
     SDL_Texture *tileTextures = nullptr;
     std::vector<SDL_Rect> tileMappings;
     int width{}, height{};
+    int tileWidth{}, tileHeight{};
     std::vector<Collider> colliders;
     std::vector<Vector2D> itemLocations;
     std::vector<SDL_FRect> landingZones;

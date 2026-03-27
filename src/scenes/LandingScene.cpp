@@ -57,6 +57,30 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         e.addComponent<Sprite>(colTex, colTexSrc, colTexDst);
     }
 
+    auto& leftBarrier(world.createEntity());
+    leftBarrier.addComponent<Transform>(Vector2D(-20.f, 0), 0.0f, 1.0f);
+    auto& lCol = leftBarrier.addComponent<Collider>("wall");
+    lCol.rect.w = 20.0f;
+    lCol.rect.h = world.getMap().height * world.getMap().tileHeight;
+
+    auto& rightBarrier(world.createEntity());
+    rightBarrier.addComponent<Transform>(Vector2D(world.getMap().width * world.getMap().tileWidth, 0), 0.0f, 1.0f);
+    auto& rCol = rightBarrier.addComponent<Collider>("wall");
+    rCol.rect.w = 20.0f;
+    rCol.rect.h = world.getMap().height * world.getMap().tileHeight;
+
+    auto& topBarrier(world.createEntity());
+    topBarrier.addComponent<Transform>(Vector2D(0, -21), 0.0f, 1.0f);
+    auto& tCol = topBarrier.addComponent<Collider>("wall");
+    tCol.rect.h = 20.0f;
+    tCol.rect.w = world.getMap().width * world.getMap().tileWidth;
+
+    auto& bottomBarrier(world.createEntity());
+    bottomBarrier.addComponent<Transform>(Vector2D(0, world.getMap().height * world.getMap().tileHeight + 1), 0.0f, 1.0f);
+    auto& bCol = bottomBarrier.addComponent<Collider>("wall");
+    bCol.rect.h = 20.0f;
+    bCol.rect.w = world.getMap().width * world.getMap().tileWidth;
+
     auto& player(world.createEntity());
     player.addComponent<PlayerTag>();
 
@@ -111,30 +135,27 @@ SDL_FColor LandingScene::getBackgroundColour()
 
     if (playerEntity && cameraEntity)
     {
-        SDL_FColor skyColour = {0.1f, 0.0f, 0.2f, 1.0f};
-        SDL_FColor groundColour = {0.95f, 0.80f, 0.55f, 1.0f};
-        SDL_FColor underGroundColour = {0.40f, 0.30f, 0.20f, 1.0f};
+        constexpr SDL_FColor skyColour = {0.1f, 0.0f, 0.2f, 1.0f};
+        constexpr SDL_FColor groundColour = {0.95f, 0.80f, 0.55f, 1.0f};
+        constexpr SDL_FColor underGroundColour = {0.40f, 0.30f, 0.20f, 1.0f};
 
-        auto& playerTransform = playerEntity->getComponent<Transform>();
-        auto& camera = cameraEntity->getComponent<Camera>();
+        const auto& playerTransform = playerEntity->getComponent<Transform>();
+        const auto& camera = cameraEntity->getComponent<Camera>();
 
         if (const float heightPercent = playerTransform.position.y / camera.worldHeight; heightPercent < 0.20f)
         {
-            // 0.00 → 0.10 : sky → ground
-            float blend = heightPercent / 0.20f;  // remap to 0 → 1
+            const float blend = heightPercent / 0.20f;
             return lerp(skyColour, groundColour, blend);
         }
         else if (heightPercent < 0.90f)
         {
-            // 0.10 → 0.90 : ground → underground
-            float blend = (heightPercent - 0.20f) / 0.70f;  // remap to 0 → 1
+            const float blend = (heightPercent - 0.20f) / 0.70f;
             return lerp(groundColour, underGroundColour, blend);
         }
         else
         {
-            // 0.90 → 1.00 : underground → deeper underground (or just underground)
-            float blend = (heightPercent - 0.90f) / 0.10f;
-            return lerp(underGroundColour, underGroundColour, blend); // effectively just underground
+            const float blend = (heightPercent - 0.90f) / 0.10f;
+            return lerp(underGroundColour, underGroundColour, blend);
         }
 
     }
