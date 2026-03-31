@@ -13,7 +13,7 @@
 #include "CollisionSystem.h"
 #include "DestructionSystem.h"
 #include "Entity.h"
-#include "EventManager.h"
+#include "events/EventManager.h"
 #include "KeyboardInputSystem.h"
 #include "Map.h"
 #include "MovementSystem.h"

@@ -17,6 +17,7 @@ public:
 
     Scene(const char* sceneName, int windowWidth, int windowHeight, const char* mapPath, const char* spriteSheetPath, std::vector<SDL_Rect> tileMappings);
     Scene(const char* sceneName, int windowWidth, int windowHeight);
+    virtual ~Scene() = default;
 
     const std::string& getName() const
     {

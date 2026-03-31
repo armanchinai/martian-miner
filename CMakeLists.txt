@@ -41,7 +41,7 @@ add_executable(martian-miner src/main.cpp
         src/utils/Collision.cpp
         src/ecs/system/CollisionSystem.h
         src/ecs/system/CollisionSystem.cpp
-        src/ecs/EventManager.h
+        src/ecs/events/EventManager.h
         src/ecs/World.cpp
         src/vendor/tinyxml2.h
         src/vendor/tinyxml2.cpp
@@ -60,6 +60,9 @@ add_executable(martian-miner src/main.cpp
         src/ecs/system/VelocitySystem.h
         src/scenes/LandingScene.cpp
         src/scenes/LandingScene.h
+        src/ecs/events/BaseEvent.h
+        src/ecs/system/EventResponseSystem.h
+        src/ecs/system/EventResponseSystem.cpp
 )
 
 target_link_libraries(martian-miner
