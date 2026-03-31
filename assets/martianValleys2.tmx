@@ -261,11 +261,11 @@
   <object id="160" x="3809" y="577" width="30" height="158"/>
  </objectgroup>
  <objectgroup color="#00aa00" id="3" name="LandingZoneLayer">
-  <object id="2" x="1376" y="3484" width="512" height="4"/>
-  <object id="3" x="704" y="2748" width="128" height="4"/>
-  <object id="4" x="64" y="1276" width="192" height="4"/>
-  <object id="5" x="1472" y="1276" width="160" height="4"/>
-  <object id="6" x="3520" y="636" width="256" height="4"/>
-  <object id="7" x="3200" y="3484" width="320" height="4"/>
+  <object id="2" x="1376" y="3456" width="512" height="32"/>
+  <object id="3" x="704" y="2720" width="128" height="32"/>
+  <object id="4" x="64" y="1248" width="192" height="32"/>
+  <object id="5" x="1472" y="1248" width="160" height="32"/>
+  <object id="6" x="3520" y="608" width="256" height="32"/>
+  <object id="7" x="3200" y="3456" width="320" height="32"/>
  </objectgroup>
 </map>

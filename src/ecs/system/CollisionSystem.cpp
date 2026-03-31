@@ -3,13 +3,14 @@
 //
 
 #include "CollisionSystem.h"
-
 #include "Collision.h"
 #include "World.h"
+#include <set>
 
 void CollisionSystem::update(World& world)
 {
     const std::vector<Entity*> collidables = queryCollidables(world.getEntities());
+    std::set<CollisionKey> currentCollisions{};
 
     for (size_t i = 0; i < collidables.size(); i++)
     {
@@ -26,13 +27,30 @@ void CollisionSystem::update(World& world)
 
             if (auto& colB = entityB->getComponent<Collider>(); Collision::AABB(colA, colB))
             {
-                world.getEventManager().emit(CollisionEvent{entityA, entityB});
-                colA.isColliding = true;
-                colB.isColliding = true;
-            }
+                CollisionKey key = makeKey(entityA, entityB);
+                currentCollisions.insert(key);
 
+                if (!activeCollisions.contains(key))
+                {
+                    world.getEventManager().emit(CollisionEvent{entityA, entityB, CollisionState::Enter});
+                }
+                else
+                {
+                    world.getEventManager().emit(CollisionEvent{entityA, entityB, CollisionState::Stay});
+                }
+            }
         }
     }
+
+    for (auto& key : activeCollisions)
+    {
+        if (!currentCollisions.contains(key))
+        {
+            world.getEventManager().emit(CollisionEvent{key.first, key.second, CollisionState::Exit});
+        }
+    }
+
+    activeCollisions = std::move(currentCollisions);
 }
 
 std::vector<Entity*> CollisionSystem::queryCollidables(const std::vector<std::unique_ptr<Entity>>& entities)

@@ -84,7 +84,10 @@ struct SceneState
     int coinsCollected = 0;
 };
 
-struct PlayerTag{};
+struct PlayerTag
+{
+    bool withinLandingZone = false;
+};
 struct ProjectileTag{};
 
 #endif //LECTURE3_COMPONENT_H

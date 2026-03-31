@@ -13,6 +13,7 @@
 #include "CollisionSystem.h"
 #include "DestructionSystem.h"
 #include "Entity.h"
+#include "EventResponseSystem.h"
 #include "events/EventManager.h"
 #include "KeyboardInputSystem.h"
 #include "Map.h"
@@ -37,9 +38,10 @@ class World
     DestructionSystem destructionSystem;
     AccelerationSystem accelerationSystem;
     VelocitySystem velocitySystem;
+    EventResponseSystem eventResponseSystem{*this};
 public:
-    World();
-    void update(const float deltaTime, const SDL_Event event)
+    World() = default;
+    void update(const float deltaTime, const SDL_Event& event)
     {
         keyboardInputSystem.update(entities, event);
         accelerationSystem.update(entities, deltaTime);

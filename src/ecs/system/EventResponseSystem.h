@@ -14,9 +14,10 @@ class World;
 class EventResponseSystem {
 public:
     EventResponseSystem(World& world);
+
 private:
-    void onCollision(const CollisionEvent& e, const char* otherTag, World& world);
-    bool getCollisionEntities(const CollisionEvent& e, const char* otherTag, Entity*& player, Entity*& other);
+    void onCollision(const CollisionEvent& e, const char* entityTag, const char* otherTag, World& world);
+    bool getCollisionEntities(const CollisionEvent& e, const char* entityTag, const char* otherTag, Entity*& entity, Entity*& other);
 
     void onPlayerAction(const PlayerAction& e, const std::function<void(Entity* player, PlayerAction action)>& callback);
 };

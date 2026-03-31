@@ -7,9 +7,11 @@ set(CMAKE_CXX_STANDARD 20)
 if (WIN32)
     set(SDL3_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3-3.2.20")
     set(SDL3_IMAGE_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3_image-3.2.4")
+    set(SDL3_MIXER_PATH "${PROJECT_SOURCE_DIR}/src/vendor/sdl3_mixer 3.1.0")
     include_directories(
             ${SDL3_PATH}/include
             ${SDL3_IMAGE_PATH}/include
+            ${SDL3_MIXER_PATH}/include
             ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_SOURCE_DIR}/src/ecs
             ${PROJECT_SOURCE_DIR}/src/ecs/system
@@ -19,6 +21,7 @@ if (WIN32)
     link_directories(
             ${SDL3_PATH}/lib
             ${SDL3_IMAGE_PATH}/lib
+            ${SDL3_MIXER}/lib
     )
 endif ()
 
@@ -42,7 +45,6 @@ add_executable(martian-miner src/main.cpp
         src/ecs/system/CollisionSystem.h
         src/ecs/system/CollisionSystem.cpp
         src/ecs/events/EventManager.h
-        src/ecs/World.cpp
         src/vendor/tinyxml2.h
         src/vendor/tinyxml2.cpp
         src/Map.cpp
