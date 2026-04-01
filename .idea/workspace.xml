@@ -30,16 +30,9 @@
   <component name="ChangeListManager">
     <list default="true" id="fe1d1eb7-9515-4d3b-af67-8671e60cc3ba" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ecs/World.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/World.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ecs/events/BaseEvent.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/BaseEvent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ecs/events/EventManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/EventManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ecs/system/AccelerationSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/AccelerationSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/animations/lander_animations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/assets/animations/lander_animations.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ecs/system/RenderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/RenderSystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/managers/TextureManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/TextureManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scenes/LandingScene.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/LandingScene.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/managers/BaseEvent.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/BaseEvent.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,7 +142,7 @@
       <option name="presentableId" value="Default" />
       <updated>1773254879233</updated>
       <workItem from="1773254882520" duration="3076000" />
-      <workItem from="1774995964136" duration="6186000" />
+      <workItem from="1774995964136" duration="8197000" />
     </task>
     <servers />
   </component>

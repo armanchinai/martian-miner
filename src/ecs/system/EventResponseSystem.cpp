@@ -45,7 +45,7 @@ void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entit
         return;
     }
 
-    if ((std::string(entityTag) == "player" && std::string(otherTag) == "wall") || (std::string(entityTag) == "player" && std::string(otherTag) == "barrier"))
+    if ((std::string(entityTag) == "player" && std::string(otherTag) == "barrier") || (std::string(entityTag) == "player" && std::string(otherTag) == "wall"))
     {
         auto& t = entity->getComponent<Transform>();
         auto& v = entity->getComponent<Velocity>();
@@ -118,17 +118,25 @@ void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entit
             playerRect.x = t.position.x;
             playerRect.y = t.position.y;
         }
-        int angle = ((int)t.rotation % 360 + 360) % 360;
+    }
 
-        if (std::string(otherTag) == "wall" && (
-                (angle > 15 && angle < 345) || v.magnitude > 100.0f
-            )) {
+    if (std::string(entityTag) == "player" && std::string(otherTag) == "wall") {
+        auto& tag = entity->getComponent<PlayerTag>();
+        if (!tag.withinLandingZone) {
             Game::onSceneChangeRequest("gameover");
         }
     }
 
     if (std::string(entityTag) == "player" && std::string(otherTag) == "landingZone")
     {
+        auto& t = entity->getComponent<Transform>();
+        auto& v = entity->getComponent<Velocity>();
+        int angle = ((int)t.rotation % 360 + 360) % 360;
+
+        if ((angle > 15 && angle < 345) || v.magnitude > 100.0f) {
+            Game::onSceneChangeRequest("gameover");
+        }
+
         if (e.state == CollisionState::Enter)
         {
             if (entity->hasComponent<PlayerTag>())
