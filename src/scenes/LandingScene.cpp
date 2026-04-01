@@ -123,13 +123,6 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             return;
         }
 
-        auto& t = entity->getComponent<Transform>();
-        auto& v = entity->getComponent<Velocity>();
-
-        if (int angle = (static_cast<int>(t.rotation) % 360 + 360) % 360; (angle > 15 && angle < 345) || v.magnitude > 100.0f) {
-            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
-        }
-
         if (collisionEvent.state == CollisionState::Enter)
         {
             if (entity->hasComponent<PlayerTag>())
@@ -251,6 +244,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             auto& tag = entity->getComponent<PlayerTag>();
             if (!tag.withinLandingZone) {
                 world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+            } else if (int angle = (static_cast<int>(t.rotation) % 360 + 360) % 360; (angle > 15 && angle < 345) || v.magnitude > 100.0f) {
+                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
             }
         }
     });
@@ -269,7 +264,17 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             return;
         }
 
-        std::cout << "Death" << std::endl;
+        auto &playerExplosion (world.createDeferredEntity());
+
+        Animation explosionAnim = AssetManager::getAnimation("explosion");
+        playerExplosion.addComponent<Animation>(explosionAnim);
+        auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
+
+        SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
+
+        SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
+        SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
+        playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
     });
 }
 

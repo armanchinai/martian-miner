@@ -18,37 +18,43 @@ public:
     {
         for (auto& e : entities)
         {
-            if (e->hasComponent<Animation>() && e->hasComponent<ForceInput>())
+            if (e->hasComponent<Animation>())
             {
                 auto& anim = e->getComponent<Animation>();
-                auto& fi = e->getComponent<ForceInput>();
 
-                //state system
                 std::string newClip;
 
-                if (fi.inputPositional.x > 0.0f && fi.inputPositional.y < 0.0f)
+                if (e->hasComponent<ForceInput>())
                 {
-                    newClip = "upAndRight";
-                }
-                else if (fi.inputPositional.x < 0.0f && fi.inputPositional.y < 0.0f)
-                {
-                    newClip = "upAndLeft";
-                }
-                else if (fi.inputPositional.x > 0.0f)
-                {
-                    newClip = "right";
-                }
-                else if (fi.inputPositional.x < 0.0f)
-                {
-                    newClip = "left";
-                }
-                else if (fi.inputPositional.y > 0.0f)
-                {
-                    newClip = "idle";
-                }
-                else if (fi.inputPositional.y < 0.0f)
-                {
-                    newClip = "up";
+                    auto& fi = e->getComponent<ForceInput>();
+                    if (fi.inputPositional.x > 0.0f && fi.inputPositional.y < 0.0f)
+                    {
+                        newClip = "upAndRight";
+                    }
+                    else if (fi.inputPositional.x < 0.0f && fi.inputPositional.y < 0.0f)
+                    {
+                        newClip = "upAndLeft";
+                    }
+                    else if (fi.inputPositional.x > 0.0f)
+                    {
+                        newClip = "right";
+                    }
+                    else if (fi.inputPositional.x < 0.0f)
+                    {
+                        newClip = "left";
+                    }
+                    else if (fi.inputPositional.y > 0.0f)
+                    {
+                        newClip = "idle";
+                    }
+                    else if (fi.inputPositional.y < 0.0f)
+                    {
+                        newClip = "up";
+                    }
+                    else
+                    {
+                        newClip = "idle";
+                    }
                 }
                 else
                 {
