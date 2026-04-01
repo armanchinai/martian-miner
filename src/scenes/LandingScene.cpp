@@ -148,17 +148,15 @@ SDL_FColor LandingScene::getBackgroundColour()
             const float blend = heightPercent / 0.20f;
             return lerp(skyColour, groundColour, blend);
         }
-        else if (heightPercent < 0.90f)
-        {
-            const float blend = (heightPercent - 0.20f) / 0.70f;
-            return lerp(groundColour, underGroundColour, blend);
-        }
-        else
-        {
+        else {
+            if (heightPercent < 0.90f)
+            {
+                const float blend = (heightPercent - 0.20f) / 0.70f;
+                return lerp(groundColour, underGroundColour, blend);
+            }
             const float blend = (heightPercent - 0.90f) / 0.10f;
             return lerp(underGroundColour, underGroundColour, blend);
         }
-
     }
     return {0.0f, 0.0f, 0.0f, 1.0f};
 }
