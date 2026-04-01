@@ -5,6 +5,7 @@
 #include "EventResponseSystem.h"
 
 #include "World.h"
+#include "Game.h"
 
 EventResponseSystem::EventResponseSystem(World &world) {
     world.getEventManager().subscribe(
@@ -44,7 +45,7 @@ void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entit
         return;
     }
 
-    if ((std::string(entityTag) == "player" && std::string(otherTag) == "wall") || (std::string(entityTag) == "player"&& std::string(otherTag) == "barrier"))
+    if ((std::string(entityTag) == "player" && std::string(otherTag) == "wall") || (std::string(entityTag) == "player" && std::string(otherTag) == "barrier"))
     {
         auto& t = entity->getComponent<Transform>();
         auto& v = entity->getComponent<Velocity>();
@@ -109,16 +110,20 @@ void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entit
                     t.position.y -= overlapY;
                     v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
                     v.direction.y = 0;
-                    if (v.direction.x < 0) {
-                        v.direction.x = -1;
-                    } else {
-                        v.direction.x = 1;
-                    }
+                    v.direction.x = 0;
+                    v.magnitude = 0;
                 }
             }
 
             playerRect.x = t.position.x;
             playerRect.y = t.position.y;
+        }
+        int angle = ((int)t.rotation % 360 + 360) % 360;
+
+        if (std::string(otherTag) == "wall" && (
+                (angle > 15 && angle < 345) || v.magnitude > 100.0f
+            )) {
+            Game::onSceneChangeRequest("gameover");
         }
     }
 
@@ -137,7 +142,7 @@ void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entit
             if (entity->hasComponent<PlayerTag>())
             {
                 auto& playerTag = entity->getComponent<PlayerTag>();
-                playerTag.withinLandingZone = true;
+                playerTag.withinLandingZone = false;
             }
         }
     }

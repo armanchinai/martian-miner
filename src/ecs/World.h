@@ -14,7 +14,7 @@
 #include "DestructionSystem.h"
 #include "Entity.h"
 #include "EventResponseSystem.h"
-#include "events/EventManager.h"
+#include "../managers/EventManager.h"
 #include "KeyboardInputSystem.h"
 #include "Map.h"
 #include "MovementSystem.h"

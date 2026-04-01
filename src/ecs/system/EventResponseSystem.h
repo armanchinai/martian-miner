@@ -6,7 +6,7 @@
 #define MARTIAN_MINER_EVENTRESPONSESYSTEM_H
 #include <functional>
 
-#include "events/BaseEvent.h"
+#include "../../managers/BaseEvent.h"
 
 class Entity;
 class World;

@@ -28,7 +28,19 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fe1d1eb7-9515-4d3b-af67-8671e60cc3ba" name="Changes" comment="" />
+    <list default="true" id="fe1d1eb7-9515-4d3b-af67-8671e60cc3ba" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/World.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/World.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/events/BaseEvent.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/BaseEvent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/events/EventManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/EventManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/AccelerationSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/AccelerationSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/EventResponseSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/RenderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/RenderSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/managers/TextureManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/TextureManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scenes/LandingScene.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/scenes/LandingScene.cpp" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,6 +53,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "armanchinai"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/armanchinai/martian-miner.git",
+    "accountId": "eb869900-c0f7-4f9e-9db0-301a18562128"
+  }
+}]]></component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="1UOdx5Pm" />
   </component>
@@ -94,14 +118,21 @@
       <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner\src\utils" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\arman\CLionProjects\martian-miner\src\managers" />
+      <recent name="C:\Users\arman\CLionProjects\martian-miner\cmake-build-debug" />
       <recent name="C:\Users\arman\Documents\GitHub Repositories\martian-miner\cmake-build-debug" />
       <recent name="C:\Users\wifir\Documents\C++\COMP-8052\martian-miner\src" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="martian-miner" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="martian-miner" TARGET_NAME="martian-miner" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="martian-miner" RUN_TARGET_NAME="martian-miner">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="martian-miner" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="martian-miner" TARGET_NAME="martian-miner" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="martian-miner" RUN_TARGET_NAME="martian-miner">
@@ -118,6 +149,7 @@
       <option name="presentableId" value="Default" />
       <updated>1773254879233</updated>
       <workItem from="1773254882520" duration="3076000" />
+      <workItem from="1774995964136" duration="6186000" />
     </task>
     <servers />
   </component>

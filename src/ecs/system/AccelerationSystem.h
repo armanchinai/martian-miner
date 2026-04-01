@@ -24,6 +24,7 @@ public:
                 !entity->hasComponent<ForceInput>())
                 continue;
 
+            auto& t = entity->getComponent<Transform>();
             auto& acc = entity->getComponent<Acceleration>();
             auto& phys = entity->getComponent<PhysicsObject>();
             auto& input = entity->getComponent<ForceInput>();
@@ -59,6 +60,7 @@ public:
             acc.magnitude = mag;
 
             phys.angle += input.inputPositional.x * deltaTime;
+            t.rotation = phys.angle;
 
             if (mag > 0.0001f)
             {

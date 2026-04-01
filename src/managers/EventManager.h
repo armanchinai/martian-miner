@@ -7,7 +7,7 @@
 #include <functional>
 
 #include "BaseEvent.h"
-#include "../Entity.h"
+#include "../ecs/Entity.h"
 
 class EventManager
 {

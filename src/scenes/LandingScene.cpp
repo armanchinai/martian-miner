@@ -86,10 +86,10 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
 
     const auto& playerT = player.addComponent<Transform>(Vector2D(world.getMap().width * world.getMap().tileWidth / 2,10.0f), 0.0f, 1.0f);
 
-    player.addComponent<Velocity>(Vector2D(-0.25f, 0.75f), 200.0f);
+    player.addComponent<Velocity>(Vector2D(0.0f, 1.0f), 200.0f);
     player.addComponent<Acceleration>(Vector2D(0.0f, 0.0f));
     auto& physObj = player.addComponent<PhysicsObject>();
-    physObj.angle = 45.0f;
+    physObj.angle = 0.0f;
     player.addComponent<ForceInput>();
 
     Animation anim = AssetManager::getAnimation("player");

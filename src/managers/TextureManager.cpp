@@ -40,9 +40,8 @@ SDL_Texture* TextureManager::load(const char* path)
 }
 
 void TextureManager::draw(SDL_Texture* texture, SDL_FRect src, SDL_FRect dst) {
-    SDL_RenderTexture(game->renderer, texture, &src, &dst);
+    draw(texture, src, dst, 0);
 }
-
 
 void TextureManager::draw(SDL_Texture* texture, SDL_FRect src, SDL_FRect dst, float angle)
 {
