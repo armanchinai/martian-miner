@@ -92,6 +92,9 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     physObj.angle = 0.0f;
     player.addComponent<ForceInput>();
 
+    AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
+    AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
+
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
 

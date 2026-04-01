@@ -31,11 +31,7 @@ EventResponseSystem::EventResponseSystem(World &world) {
 
         if (actionEvent.action == PlayerAction::Death)
         {
-            // std::cout << "Death" << std::endl;
-            // // Optionally, call onPlayerAction if you want to use a callback
-            onPlayerAction(actionEvent.action, [](Entity* player, PlayerAction a) {
-
-            });
+            onPlayerAction(actionEvent.action, [](Entity* player, PlayerAction a) {});
         }
     }
 );

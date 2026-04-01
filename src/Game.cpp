@@ -59,10 +59,6 @@ void Game::init(const char* title, const int width, const int height, const bool
         isRunning = false;
     }
 
-    // Load Assets
-    AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
-    AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
-
     // Load Scenes
     sceneManager.loadScene<LandingScene>("game", width, height);
     sceneManager.changeSceneDeferred("game");
