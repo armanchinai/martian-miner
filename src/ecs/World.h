@@ -21,6 +21,7 @@
 #include "RenderSystem.h"
 #include "SpawnTimerSystem.h"
 #include "VelocitySystem.h"
+#include "managers/AssetManager.h"
 
 class World
 {

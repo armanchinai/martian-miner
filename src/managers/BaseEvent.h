@@ -28,7 +28,7 @@ struct CollisionEvent : BaseEvent {
     }
 };
 
-enum class PlayerAction { RotationLock, Destruct };
+enum class PlayerAction { Interact, Death };
 
 struct PlayerActionEvent : BaseEvent {
     Entity* player = nullptr;

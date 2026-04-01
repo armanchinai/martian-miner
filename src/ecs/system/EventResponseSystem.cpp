@@ -22,17 +22,23 @@ EventResponseSystem::EventResponseSystem(World &world) {
     );
 
     world.getEventManager().subscribe(
-        [this, &world](const BaseEvent& e)
-        {
-            if (e.type != EventType::PlayerAction)
-            {
-                return;
-            }
+    [this, &world](const BaseEvent& e)
+    {
+        if (e.type != EventType::PlayerAction)
+            return;
 
-            const auto& action = static_cast<const PlayerActionEvent&>(e);
-            // Player Action implementation goes here (or doesn't go here, depending on if we need it)
+        const auto& actionEvent = static_cast<const PlayerActionEvent&>(e);
+
+        if (actionEvent.action == PlayerAction::Death)
+        {
+            // std::cout << "Death" << std::endl;
+            // // Optionally, call onPlayerAction if you want to use a callback
+            onPlayerAction(actionEvent.action, [](Entity* player, PlayerAction a) {
+
+            });
         }
-    );
+    }
+);
 }
 
 void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entityTag, const char* otherTag, World& world)
@@ -123,7 +129,7 @@ void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entit
     if (std::string(entityTag) == "player" && std::string(otherTag) == "wall") {
         auto& tag = entity->getComponent<PlayerTag>();
         if (!tag.withinLandingZone) {
-            Game::onSceneChangeRequest("gameover");
+            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
         }
     }
 
@@ -134,7 +140,7 @@ void EventResponseSystem::onCollision(const CollisionEvent& e, const char* entit
         int angle = ((int)t.rotation % 360 + 360) % 360;
 
         if ((angle > 15 && angle < 345) || v.magnitude > 100.0f) {
-            Game::onSceneChangeRequest("gameover");
+            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
         }
 
         if (e.state == CollisionState::Enter)
@@ -161,8 +167,7 @@ bool EventResponseSystem::getCollisionEntities(
     const char* entityTag,
     const char* otherTag,
     Entity*& entity,
-    Entity*& other)
-{
+    Entity*& other) {
     if (e.entityA == nullptr || e.entityB == nullptr)
     {
         return false;
@@ -188,4 +193,15 @@ bool EventResponseSystem::getCollisionEntities(
     }
 
     return entity && other;
+}
+
+void EventResponseSystem::onPlayerAction(
+    const PlayerAction& action,
+    const std::function<void(Entity* player, PlayerAction a)>& callback
+) {
+    // Here we just call the callback if the action is Death
+    if (action == PlayerAction::Death) {
+        std::cout << "Death" << std::endl;
+        callback(nullptr, action); // nullptr because you can pass the player entity if needed
+    }
 }
