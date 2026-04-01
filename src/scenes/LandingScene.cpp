@@ -3,8 +3,8 @@
 //
 
 #include "LandingScene.h"
-
 #include "managers/AssetManager.h"
+#include "utils/Collision.h"
 
 LandingScene::LandingScene(const char* name, const int windowWidth, const int windowHeight) :
 Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../assets/mars_tileset_w_background.png",
@@ -106,6 +106,171 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     auto& playerCol = player.addComponent<Collider>("player");
     playerCol.rect.w = playerDst.w;
     playerCol.rect.h = playerDst.h;
+
+    // Landing Zone Listener
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::Collision) {
+            return;
+        }
+
+        const auto collisionEvent = dynamic_cast<const CollisionEvent &>(e);
+
+        Entity* entity = nullptr;
+        Entity* other = nullptr;
+
+        if (!Collision::getCollisionParticipants(collisionEvent, "player", "landingZone", entity, other))
+        {
+            return;
+        }
+
+        auto& t = entity->getComponent<Transform>();
+        auto& v = entity->getComponent<Velocity>();
+
+        if (int angle = (static_cast<int>(t.rotation) % 360 + 360) % 360; (angle > 15 && angle < 345) || v.magnitude > 100.0f) {
+            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+        }
+
+        if (collisionEvent.state == CollisionState::Enter)
+        {
+            if (entity->hasComponent<PlayerTag>())
+            {
+                auto& playerTag = entity->getComponent<PlayerTag>();
+                playerTag.withinLandingZone = true;
+            }
+        }
+        else if (collisionEvent.state == CollisionState::Exit)
+        {
+            if (entity->hasComponent<PlayerTag>())
+            {
+                auto& playerTag = entity->getComponent<PlayerTag>();
+                playerTag.withinLandingZone = false;
+            }
+        }
+    });
+
+    // Barrier/Wall Listener
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::Collision) {
+            return;
+        }
+
+        const auto collisionEvent = dynamic_cast<const CollisionEvent &>(e);
+
+        Entity* entity = nullptr;
+        Entity* other = nullptr;
+
+        bool isWall = false;
+        if (Entity* wall = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "wall", entity, wall))
+        {
+            other = wall;
+            isWall = true;
+        }
+        else if (Entity* barrier = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "barrier", entity, barrier))
+        {
+            other = barrier;
+        }
+        else
+        {
+            return;
+        }
+
+        auto& t = entity->getComponent<Transform>();
+        auto& v = entity->getComponent<Velocity>();
+        auto& playerRect = entity->getComponent<Collider>().rect;
+        auto& wallRect   = other->getComponent<Collider>().rect;
+
+        const float playerCenterX = playerRect.x + playerRect.w  * 0.5f;
+        const float playerCenterY = playerRect.y + playerRect.h * 0.5f;
+
+        const float wallCenterX = wallRect.x + wallRect.w  * 0.5f;
+        const float wallCenterY = wallRect.y + wallRect.h * 0.5f;
+
+        const float playerHalfW = playerRect.w  * 0.5f;
+        const float playerHalfH = playerRect.h * 0.5f;
+
+        const float wallHalfW = wallRect.w  * 0.5f;
+        const float wallHalfH = wallRect.h * 0.5f;
+
+        const float dx = playerCenterX - wallCenterX;
+        const float dy = playerCenterY - wallCenterY;
+
+        const float overlapX = playerHalfW + wallHalfW - std::abs(dx);
+
+        if (const float overlapY = playerHalfH + wallHalfH - std::abs(dy); overlapX > 0.0f && overlapY > 0.0f)
+        {
+            if (overlapX < overlapY)
+            {
+                if (dx > 0) {
+                    t.position.x += overlapX;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                    v.direction.x = 0;
+                    if (v.direction.y < 0) {
+                        v.direction.y = -1;
+                    } else {
+                        v.direction.y = 1;
+                    }
+                }
+                else {
+                    t.position.x -= overlapX;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                    v.direction.x = 0;
+                    if (v.direction.y < 0) {
+                        v.direction.y = -1;
+                    } else {
+                        v.direction.y = 1;
+                    }
+                }
+            }
+            else
+            {
+                if (dy > 0) {
+                    t.position.y += overlapY;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
+                    v.direction.y = 0;
+                    if (v.direction.x < 0) {
+                        v.direction.x = -1;
+                    } else {
+                        v.direction.x = 1;
+                    }
+                }
+                else {
+                    t.position.y -= overlapY;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
+                    v.direction.y = 0;
+                    v.direction.x = 0;
+                    v.magnitude = 0;
+                }
+            }
+
+            playerRect.x = t.position.x;
+            playerRect.y = t.position.y;
+        }
+
+        if (isWall)
+        {
+            auto& tag = entity->getComponent<PlayerTag>();
+            if (!tag.withinLandingZone) {
+                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+            }
+        }
+    });
+
+    // Player Death
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::PlayerAction)
+        {
+            return;
+        }
+
+        const auto& actionEvent = static_cast<const PlayerActionEvent&>(e);
+
+        if (actionEvent.action != PlayerAction::Death)
+        {
+            return;
+        }
+
+        std::cout << "Death" << std::endl;
+    });
 }
 
 SDL_FColor lerp(const SDL_FColor& a, const SDL_FColor& b, float t)
