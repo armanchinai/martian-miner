@@ -12,6 +12,9 @@ class LandingScene : public Scene
 public:
     LandingScene(const char* name, int windowWidth, int windowHeight);
     SDL_FColor getBackgroundColour() override;
+
+    float randomFloat();
+
 private:
     Entity* cameraEntity = nullptr;
     Entity* playerEntity = nullptr;

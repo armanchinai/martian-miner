@@ -94,6 +94,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
 
     AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
     AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
+    AssetManager::loadAnimation("asteroids", "../assets/animations/asteroid_animations.xml");
 
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
@@ -106,6 +107,27 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     auto& playerCol = player.addComponent<Collider>("player");
     playerCol.rect.w = playerDst.w;
     playerCol.rect.h = playerDst.h;
+
+    auto& asteroidSpawner(world.createEntity());
+    std::cout << windowWidth << std::endl;
+    auto t = asteroidSpawner.addComponent<Transform>(Vector2D(3750.0f, 48.0f), 0.0f, 1.0f);
+    asteroidSpawner.addComponent<TimedSpawner>(0.5f, [this, t]
+    {
+        auto& asteroid(world.createDeferredEntity());
+        asteroid.addComponent<ProjectileTag>();
+        asteroid.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
+        asteroid.addComponent<Velocity>(Vector2D(-randomFloat(), randomFloat()), 100.0f);
+
+        Animation asteroidAnim = AssetManager::getAnimation("asteroids");
+        asteroid.addComponent<Animation>(asteroidAnim);
+
+        SDL_Texture* asteroidTex = TextureManager::load("../assets/animations/asteroid.png");
+        SDL_FRect src {0, 0, 32, 32};
+        SDL_FRect dst {t.position.x, t.position.y, 32, 32};
+        asteroid.addComponent<Sprite>(asteroidTex, src, dst);
+
+        Collider c = asteroid.addComponent<Collider>("asteroid", dst);
+    });
 
     // Landing Zone Listener
     world.getEventManager().subscribe([&](const BaseEvent& e) {
@@ -153,6 +175,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         Entity* other = nullptr;
 
         bool isWall = false;
+        bool isAsteroid = false;
         if (Entity* wall = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "wall", entity, wall))
         {
             other = wall;
@@ -162,8 +185,15 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         {
             other = barrier;
         }
-        else
-        {
+        else if (Entity* asteroid = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "asteroid", entity, asteroid)) {
+            other = asteroid;
+            isAsteroid = true;
+        } else if (Collision::getCollisionParticipants(collisionEvent, "wall", "asteroid", entity, asteroid)) {
+            isAsteroid = true;
+            isWall = true;
+            asteroid->destroy();
+            return;
+        } else {
             return;
         }
 
@@ -248,6 +278,9 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
                 world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
             }
         }
+        if (isAsteroid) {
+            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+        }
     });
 
     // Player Death
@@ -286,6 +319,11 @@ SDL_FColor lerp(const SDL_FColor& a, const SDL_FColor& b, float t)
         a.b + (b.b - a.b) * t,
         1.0f
     };
+}
+
+float LandingScene::randomFloat()
+{
+    return static_cast<float>(rand()) / static_cast<float>((RAND_MAX));
 }
 
 SDL_FColor LandingScene::getBackgroundColour()
@@ -333,3 +371,5 @@ SDL_FColor LandingScene::getBackgroundColour()
     }
     return {0.0f, 0.0f, 0.0f, 1.0f};
 }
+
+
