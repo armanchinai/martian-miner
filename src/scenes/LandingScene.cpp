@@ -3,8 +3,8 @@
 //
 
 #include "LandingScene.h"
-
 #include "managers/AssetManager.h"
+#include "utils/Collision.h"
 
 LandingScene::LandingScene(const char* name, const int windowWidth, const int windowHeight) :
 Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../assets/mars_tileset_w_background.png",
@@ -92,6 +92,10 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     physObj.angle = 0.0f;
     player.addComponent<ForceInput>();
 
+    AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
+    AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
+    AssetManager::loadAnimation("asteroids", "../assets/animations/asteroid_animations.xml");
+
     Animation anim = AssetManager::getAnimation("player");
     player.addComponent<Animation>(anim);
 
@@ -103,6 +107,208 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     auto& playerCol = player.addComponent<Collider>("player");
     playerCol.rect.w = playerDst.w;
     playerCol.rect.h = playerDst.h;
+
+    auto& asteroidSpawner(world.createEntity());
+    std::cout << windowWidth << std::endl;
+    auto t = asteroidSpawner.addComponent<Transform>(Vector2D(3750.0f, 48.0f), 0.0f, 1.0f);
+    asteroidSpawner.addComponent<TimedSpawner>(0.5f, [this, t]
+    {
+        auto& asteroid(world.createDeferredEntity());
+        asteroid.addComponent<ProjectileTag>();
+        asteroid.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
+        asteroid.addComponent<Velocity>(Vector2D(-randomFloat(), randomFloat()), 100.0f);
+
+        Animation asteroidAnim = AssetManager::getAnimation("asteroids");
+        asteroid.addComponent<Animation>(asteroidAnim);
+
+        SDL_Texture* asteroidTex = TextureManager::load("../assets/animations/asteroid.png");
+        SDL_FRect src {0, 0, 32, 32};
+        SDL_FRect dst {t.position.x, t.position.y, 32, 32};
+        asteroid.addComponent<Sprite>(asteroidTex, src, dst);
+
+        Collider c = asteroid.addComponent<Collider>("asteroid", dst);
+    });
+
+    // Landing Zone Listener
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::Collision) {
+            return;
+        }
+
+        const auto collisionEvent = dynamic_cast<const CollisionEvent &>(e);
+
+        Entity* entity = nullptr;
+        Entity* other = nullptr;
+
+        if (!Collision::getCollisionParticipants(collisionEvent, "player", "landingZone", entity, other))
+        {
+            return;
+        }
+
+        if (collisionEvent.state == CollisionState::Enter)
+        {
+            if (entity->hasComponent<PlayerTag>())
+            {
+                auto& playerTag = entity->getComponent<PlayerTag>();
+                playerTag.withinLandingZone = true;
+            }
+        }
+        else if (collisionEvent.state == CollisionState::Exit)
+        {
+            if (entity->hasComponent<PlayerTag>())
+            {
+                auto& playerTag = entity->getComponent<PlayerTag>();
+                playerTag.withinLandingZone = false;
+            }
+        }
+    });
+
+    // Barrier/Wall Listener
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::Collision) {
+            return;
+        }
+
+        const auto collisionEvent = dynamic_cast<const CollisionEvent &>(e);
+
+        Entity* entity = nullptr;
+        Entity* other = nullptr;
+
+        bool isWall = false;
+        bool isAsteroid = false;
+        if (Entity* wall = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "wall", entity, wall))
+        {
+            other = wall;
+            isWall = true;
+        }
+        else if (Entity* barrier = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "barrier", entity, barrier))
+        {
+            other = barrier;
+        }
+        else if (Entity* asteroid = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "asteroid", entity, asteroid)) {
+            other = asteroid;
+            isAsteroid = true;
+        } else if (Collision::getCollisionParticipants(collisionEvent, "wall", "asteroid", entity, asteroid)) {
+            isAsteroid = true;
+            isWall = true;
+            asteroid->destroy();
+            return;
+        } else {
+            return;
+        }
+
+        auto& t = entity->getComponent<Transform>();
+        auto& v = entity->getComponent<Velocity>();
+        auto& playerRect = entity->getComponent<Collider>().rect;
+        auto& wallRect   = other->getComponent<Collider>().rect;
+
+        const float playerCenterX = playerRect.x + playerRect.w  * 0.5f;
+        const float playerCenterY = playerRect.y + playerRect.h * 0.5f;
+
+        const float wallCenterX = wallRect.x + wallRect.w  * 0.5f;
+        const float wallCenterY = wallRect.y + wallRect.h * 0.5f;
+
+        const float playerHalfW = playerRect.w  * 0.5f;
+        const float playerHalfH = playerRect.h * 0.5f;
+
+        const float wallHalfW = wallRect.w  * 0.5f;
+        const float wallHalfH = wallRect.h * 0.5f;
+
+        const float dx = playerCenterX - wallCenterX;
+        const float dy = playerCenterY - wallCenterY;
+
+        const float overlapX = playerHalfW + wallHalfW - std::abs(dx);
+
+        if (const float overlapY = playerHalfH + wallHalfH - std::abs(dy); overlapX > 0.0f && overlapY > 0.0f)
+        {
+            if (overlapX < overlapY)
+            {
+                if (dx > 0) {
+                    t.position.x += overlapX;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                    v.direction.x = 0;
+                    if (v.direction.y < 0) {
+                        v.direction.y = -1;
+                    } else {
+                        v.direction.y = 1;
+                    }
+                }
+                else {
+                    t.position.x -= overlapX;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                    v.direction.x = 0;
+                    if (v.direction.y < 0) {
+                        v.direction.y = -1;
+                    } else {
+                        v.direction.y = 1;
+                    }
+                }
+            }
+            else
+            {
+                if (dy > 0) {
+                    t.position.y += overlapY;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
+                    v.direction.y = 0;
+                    if (v.direction.x < 0) {
+                        v.direction.x = -1;
+                    } else {
+                        v.direction.x = 1;
+                    }
+                }
+                else {
+                    t.position.y -= overlapY;
+                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
+                    v.direction.y = 0;
+                    v.direction.x = 0;
+                    v.magnitude = 0;
+                }
+            }
+
+            playerRect.x = t.position.x;
+            playerRect.y = t.position.y;
+        }
+
+        if (isWall)
+        {
+            auto& tag = entity->getComponent<PlayerTag>();
+            if (!tag.withinLandingZone) {
+                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+            } else if (int angle = (static_cast<int>(t.rotation) % 360 + 360) % 360; (angle > 15 && angle < 345) || v.magnitude > 100.0f) {
+                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+            }
+        }
+        if (isAsteroid) {
+            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+        }
+    });
+
+    // Player Death
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::PlayerAction)
+        {
+            return;
+        }
+
+        const auto& actionEvent = static_cast<const PlayerActionEvent&>(e);
+
+        if (actionEvent.action != PlayerAction::Death)
+        {
+            return;
+        }
+
+        auto &playerExplosion (world.createDeferredEntity());
+
+        Animation explosionAnim = AssetManager::getAnimation("explosion");
+        playerExplosion.addComponent<Animation>(explosionAnim);
+        auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
+
+        SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
+
+        SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
+        SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
+        playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
+    });
 }
 
 SDL_FColor lerp(const SDL_FColor& a, const SDL_FColor& b, float t)
@@ -113,6 +319,11 @@ SDL_FColor lerp(const SDL_FColor& a, const SDL_FColor& b, float t)
         a.b + (b.b - a.b) * t,
         1.0f
     };
+}
+
+float LandingScene::randomFloat()
+{
+    return static_cast<float>(rand()) / static_cast<float>((RAND_MAX));
 }
 
 SDL_FColor LandingScene::getBackgroundColour()
@@ -160,3 +371,5 @@ SDL_FColor LandingScene::getBackgroundColour()
     }
     return {0.0f, 0.0f, 0.0f, 1.0f};
 }
+
+

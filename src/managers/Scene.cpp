@@ -33,7 +33,7 @@ Scene::Scene(const char* sceneName, const int windowWidth, const int windowHeigh
     SDL_FRect camView;
     camView.w = windowWidth;
     camView.h = windowHeight;
-    camera.addComponent<Camera>(camView, world.getMap().width * 32, world.getMap().height * 32);
+    camera.addComponent<Camera>(camView, world.getMap().width * 32.0f, world.getMap().height * 32.0f);
 }
 
 Scene::Scene(const char* sceneName, const int windowWidth, const int windowHeight)
@@ -46,5 +46,5 @@ Scene::Scene(const char* sceneName, const int windowWidth, const int windowHeigh
     SDL_FRect camView;
     camView.w = windowWidth;
     camView.h = windowHeight;
-    camera.addComponent<Camera>(camView, world.getMap().width * 32, world.getMap().height * 32);
+    camera.addComponent<Camera>(camView, world.getMap().width * 32.0f, world.getMap().height * 32.0f);
 }
