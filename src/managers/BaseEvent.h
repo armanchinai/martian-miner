@@ -10,6 +10,7 @@ class Entity;
 enum class EventType {
     Collision,
     PlayerAction,
+    GameState,
 };
 
 struct BaseEvent {
@@ -35,6 +36,15 @@ struct PlayerActionEvent : BaseEvent {
     PlayerAction action{};
     PlayerActionEvent(Entity* player, const PlayerAction action) : player(player), action(action) {
         type = EventType::PlayerAction;
+    };
+};
+
+enum class GameState { Win, Lose };
+
+struct GameStateEvent : BaseEvent {
+    GameState gameState{};
+    GameStateEvent(const GameState gameState) : gameState(gameState) {
+        type = EventType::GameState;
     };
 };
 

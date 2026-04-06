@@ -93,7 +93,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     player.addComponent<ForceInput>();
 
     auto& points = player.addComponent<Points>();
-    points.target = 7;
+    points.target = 5;
 
     AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
     AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
@@ -313,6 +313,21 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
             SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
             playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
+            world.getEventManager().emit(GameStateEvent{GameState::Lose});
+        }
+    });
+
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::GameState) {
+            return;
+        }
+
+        const auto& gameStateEvent = static_cast<const GameStateEvent&>(e);
+
+        if (gameStateEvent.gameState == GameState::Win) {
+            std::cout << "win" << std::endl;
+        } else if (gameStateEvent.gameState == GameState::Lose) {
+            std::cout << "lose" << std::endl;
         }
     });
 }

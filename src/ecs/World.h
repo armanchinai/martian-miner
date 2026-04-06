@@ -53,7 +53,7 @@ public:
         cameraSystem.update(entities);
         spawnTimerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
-        scoringSystem.checkScore(entities);
+        scoringSystem.checkScore(*this, entities);
         synchronizeEntities();
         cleanup();
     }

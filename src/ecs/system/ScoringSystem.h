@@ -10,22 +10,12 @@
 #include "Component.h"
 #include "Entity.h"
 
+class World;
+
 class ScoringSystem
 {
 public:
-    void checkScore(const std::vector<std::unique_ptr<Entity>>& entities) {
-        for (auto& entity : entities)
-        {
-            if (entity->hasComponent<Points>())
-            {
-                auto& points = entity->getComponent<Points>();
-                if (points.current == points.target) {
-                    std::cout << "win" << std::endl;
-                }
-                std::cout << points.current << std::endl;
-            }
-        }
-    }
+    void checkScore(World& world, const std::vector<std::unique_ptr<Entity>>& entities);
 };
 
 #endif //MARTIAN_MINER_SCORINGSYSTEM_H

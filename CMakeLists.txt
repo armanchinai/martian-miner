@@ -64,6 +64,7 @@ add_executable(martian-miner src/main.cpp
         src/scenes/LandingScene.h
         src/managers/BaseEvent.h
         src/ecs/system/ScoringSystem.h
+        src/ecs/system/ScoringSystem.cpp
 )
 
 target_link_libraries(martian-miner
