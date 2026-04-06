@@ -92,6 +92,9 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     physObj.angle = 0.0f;
     player.addComponent<ForceInput>();
 
+    auto& points = player.addComponent<Points>();
+    points.target = 7;
+
     AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
     AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
     AssetManager::loadAnimation("asteroids", "../assets/animations/asteroid_animations.xml");
@@ -159,6 +162,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             {
                 auto& playerTag = entity->getComponent<PlayerTag>();
                 playerTag.withinLandingZone = false;
+                other->destroy();
+                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Interact});
             }
         }
     });
@@ -292,22 +297,23 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
 
         const auto& actionEvent = static_cast<const PlayerActionEvent&>(e);
 
-        if (actionEvent.action != PlayerAction::Death)
+        if (actionEvent.action == PlayerAction::Interact)
         {
-            return;
+            auto& p = player.getComponent<Points>();
+            p.current += 1;
+        } else if (actionEvent.action == PlayerAction::Death) {
+            auto &playerExplosion (world.createDeferredEntity());
+
+            Animation explosionAnim = AssetManager::getAnimation("explosion");
+            playerExplosion.addComponent<Animation>(explosionAnim);
+            auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
+
+            SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
+
+            SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
+            SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
+            playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
         }
-
-        auto &playerExplosion (world.createDeferredEntity());
-
-        Animation explosionAnim = AssetManager::getAnimation("explosion");
-        playerExplosion.addComponent<Animation>(explosionAnim);
-        auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
-
-        SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
-
-        SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
-        SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
-        playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
     });
 }
 

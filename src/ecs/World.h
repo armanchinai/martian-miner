@@ -18,6 +18,7 @@
 #include "Map.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
+#include "ScoringSystem.h"
 #include "SpawnTimerSystem.h"
 #include "VelocitySystem.h"
 #include "managers/AssetManager.h"
@@ -38,6 +39,7 @@ class World
     DestructionSystem destructionSystem;
     AccelerationSystem accelerationSystem;
     VelocitySystem velocitySystem;
+    ScoringSystem scoringSystem;
 public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
@@ -51,6 +53,7 @@ public:
         cameraSystem.update(entities);
         spawnTimerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
+        scoringSystem.checkScore(entities);
         synchronizeEntities();
         cleanup();
     }
