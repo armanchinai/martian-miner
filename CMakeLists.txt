@@ -65,6 +65,8 @@ add_executable(martian-miner src/main.cpp
         src/managers/BaseEvent.h
         src/ecs/system/EventResponseSystem.h
         src/ecs/system/EventResponseSystem.cpp
+        src/utils/RenderUtils.h
+        src/ecs/system/UIRenderSystem.h
 )
 
 target_link_libraries(martian-miner

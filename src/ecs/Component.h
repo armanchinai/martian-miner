@@ -9,6 +9,7 @@
 #include <SDL3/SDL_render.h>
 
 #include "AnimationClip.h"
+#include "Entity.h"
 #include "../utils/Vector2D.h"
 
 struct Transform
@@ -42,11 +43,19 @@ struct Velocity
     float magnitude{};
 };
 
+enum class RenderLayer
+{
+    World,
+    UI
+};
+
 struct Sprite
 {
     SDL_Texture* texture = nullptr;
     SDL_FRect src{};
     SDL_FRect dst{};
+    RenderLayer renderLayer = RenderLayer::World;
+    bool visible = true;
 };
 
 struct Collider
@@ -77,6 +86,21 @@ struct TimedSpawner
     float spawnInterval;
     std::function<void()> spawnCallback;
     float timer;
+};
+
+struct Clickable {
+    std::function<void()> onPressed{};
+    std::function<void()> onReleased{};
+    std::function<void()> onCancel{};
+    bool pressed = false;
+};
+
+struct Parent {
+    Entity* parent = nullptr;
+};
+
+struct Child {
+    std::vector<Entity*> children{};
 };
 
 struct SceneState
