@@ -63,7 +63,7 @@ void Game::init(const char* title, const int width, const int height, const bool
     // Load Scenes
     sceneManager.loadScene<LandingScene>("game", width, height);
     sceneManager.loadScene<MainMenuScene>("menu", width, height);
-    sceneManager.changeSceneDeferred("game");
+    sceneManager.changeSceneDeferred("menu");
 
     onSceneChangeRequest = [this](const std::string& sceneName)
     {

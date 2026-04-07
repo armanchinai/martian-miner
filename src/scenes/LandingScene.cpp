@@ -327,7 +327,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         auto &playerExplosion (world.createDeferredEntity());
 
         Animation explosionAnim = AssetManager::getAnimation("explosion");
-        playerExplosion.addComponent<Animation>(explosionAnim);
+        auto& animComponent = playerExplosion.addComponent<Animation>(explosionAnim);
+        animComponent.looping = false;
         auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
 
         SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
