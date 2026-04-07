@@ -73,6 +73,7 @@ struct Animation
     float time{};
     int currentFrame{};
     float speed = 0.1f;
+    bool looping = true;
 };
 
 struct Camera

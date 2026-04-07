@@ -72,7 +72,8 @@ public:
                 auto clip = anim.clips[anim.currentClip];
                 anim.time += deltaTime;
 
-                if (anim.time >= animationFrameSpeed)
+                if ((anim.time >= animationFrameSpeed && anim.looping) ||
+                    (anim.time >= animationFrameSpeed && anim.currentFrame < clip.frameIndices.size() - 1))
                 {
                     anim.time -= animationFrameSpeed;
                     const std::size_t totalAnimationFrames = clip.frameIndices.size();
