@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "Component.h"
 #include "SDL3_image/SDL_image.h"
 
 class TextureManager
@@ -15,8 +16,10 @@ class TextureManager
     static std::unordered_map<std::string, SDL_Texture*> textures;
 public:
     static SDL_Texture* load(const char* path);
-    static void draw(SDL_Texture* texture, SDL_FRect src, SDL_FRect dst);
-    static void draw(SDL_Texture* texture, SDL_FRect src, SDL_FRect dst, float angle);
+    static void draw(SDL_Texture* texture, const SDL_FRect* src, const SDL_FRect* dst);
+    static void draw(SDL_Texture* texture, const SDL_FRect* src, const SDL_FRect* dst, float angle);
+    static void loadLabel(Label& label);
+    static void updateLabel(Label& label);
     static void clean();
 };
 

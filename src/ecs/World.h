@@ -18,6 +18,7 @@
 #include "Map.h"
 #include "MouseInputSystem.h"
 #include "MovementSystem.h"
+#include "PreRenderSystem.h"
 #include "RenderSystem.h"
 #include "ScoringSystem.h"
 #include "SpawnTimerSystem.h"
@@ -44,6 +45,7 @@ class World
     UIRenderSystem uiRenderSystem;
     MouseInputSystem mouseInputSystem;
     ScoringSystem scoringSystem;
+    PreRenderSystem preRenderSystem;
 public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
@@ -59,6 +61,7 @@ public:
         spawnTimerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
         scoringSystem.checkScore(*this, entities);
+        preRenderSystem.update(entities);
         synchronizeEntities();
         cleanup();
     }

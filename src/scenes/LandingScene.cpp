@@ -3,6 +3,9 @@
 //
 
 #include "LandingScene.h"
+
+#include <sstream>
+
 #include "managers/AssetManager.h"
 #include "utils/Collision.h"
 
@@ -41,6 +44,10 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         {8 + 32 * 4, 8 + 32 * 5, 16, 16},
     })
 {
+    // Load Fonts
+    AssetManager::loadFont("OCRA", "../assets/fonts/OCRA.ttf", 16.0f);
+    AssetManager::loadFont("OCRA-Header", "../assets/fonts/OCRA.ttf", 24.0f);
+
     for (const SDL_FRect& rect : world.getMap().landingZones)
     {
         auto& e = world.createEntity();
@@ -95,6 +102,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     auto& points = player.addComponent<Points>();
     points.target = 5;
 
+    // Load Animations
     AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
     AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
     AssetManager::loadAnimation("asteroids", "../assets/animations/asteroid_animations.xml");
@@ -111,11 +119,23 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     playerCol.rect.w = playerDst.w;
     playerCol.rect.h = playerDst.h;
 
+    // Setup UI
+
+    auto& labelEntity(world.createEntity());
+    labelEntity.addComponent<Transform>(Vector2D(10.0f, 10.0f), 0.0f, 1.0f);
+    Label scoreLabel = {
+        "Landings: 0/" + std::to_string(world.getMap().landingZones.size()),
+        AssetManager::getFont("OCRA"),
+        {255, 255, 255, 255},
+        "scoreCounter",
+    };
+    TextureManager::loadLabel(scoreLabel);
+    labelEntity.addComponent<Label>(scoreLabel);
+
     auto& winOverlay = createGameOverOverlay(windowWidth, windowHeight, true);
     auto& loseOverlay = createGameOverOverlay(windowWidth, windowHeight, false);
 
     auto& asteroidSpawner(world.createEntity());
-    std::cout << windowWidth << std::endl;
     auto t = asteroidSpawner.addComponent<Transform>(Vector2D(3750.0f, 48.0f), 0.0f, 1.0f);
     asteroidSpawner.addComponent<TimedSpawner>(0.5f, [this, t]
     {
@@ -316,7 +336,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         }
     });
 
-    // Player Death
+    // PlayerAction
     world.getEventManager().subscribe([&](const BaseEvent& e) {
         if (e.type != EventType::PlayerAction)
         {
@@ -329,6 +349,14 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         {
             auto& p = player.getComponent<Points>();
             p.current += 1;
+
+            std::stringstream ss;
+            ss << "Landings: " << p.current << "/" << world.getMap().landingZones.size();
+            auto& label = labelEntity.getComponent<Label>();
+            label.text = ss.str();
+            label.dirty = true;
+
+
         } else if (actionEvent.action == PlayerAction::Death) {
             if (gameOver == true)
             {
@@ -352,14 +380,17 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             return;
         }
 
+        if (gameOver == true)
+        {
+            return;
+        }
+
         const auto& gameStateEvent = static_cast<const GameStateEvent&>(e);
 
         if (gameStateEvent.gameState == GameState::Win) {
             toggleOverlayVisibility(winOverlay);
-            std::cout << "win" << std::endl;
         } else if (gameStateEvent.gameState == GameState::Lose) {
             toggleOverlayVisibility(loseOverlay);
-            std::cout << "lose" << std::endl;
         }
         gameOver = true;
     });
@@ -415,6 +446,21 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             default:
                 break;
             }
+        }
+    });
+
+    // GameOver player remover
+    world.getEventManager().subscribe([&](const BaseEvent& e)
+    {
+        if (gameOver)
+        {
+            player.deactivateComponent<ForceInput>();
+            player.deactivateComponent<PhysicsObject>();
+            player.deactivateComponent<Velocity>();
+            player.deactivateComponent<Acceleration>();
+            player.deactivateComponent<Sprite>();
+            player.deactivateComponent<Animation>();
+            player.deactivateComponent<Collider>();
         }
     });
 }
@@ -508,14 +554,14 @@ void LandingScene::createOverlayComponents(Entity& overlay, bool isWin)
     SDL_Texture *symbolsTex = TextureManager::load("../assets/ui_symbols.png");
     SDL_FRect restartButtonSrc = {64, 0, 64, 64};
 
-    auto& restartButtonT = restartButton.addComponent<Transform>(Vector2D(baseX + overlaySprite.dst.w/2 - restartButtonSrc.w/2, baseY + overlaySprite.dst.h - 40), 0.0f, 1.0f);
+    auto& restartButtonT = restartButton.addComponent<Transform>(Vector2D(baseX + overlaySprite.dst.w/2 - restartButtonSrc.w/2, baseY + overlaySprite.dst.h - 100), 0.0f, 1.0f);
 
     SDL_FRect restartButtonDst = {restartButtonT.position.x, restartButtonT.position.y, restartButtonSrc.w, restartButtonSrc.h};
     restartButton.addComponent<Sprite>(symbolsTex, restartButtonSrc, restartButtonDst, RenderLayer::UI, false);
     restartButton.addComponent<Collider>("ui", restartButtonDst);
     auto& clickable = restartButton.addComponent<Clickable>();
     clickable.onPressed = [&restartButtonT] {
-        restartButtonT.scale = 0.5f;
+        restartButtonT.scale = 0.75f;
     };
 
     clickable.onReleased = [this, &overlay, &restartButtonT] {
@@ -529,14 +575,77 @@ void LandingScene::createOverlayComponents(Entity& overlay, bool isWin)
 
     restartButton.addComponent<Parent>(&overlay);
     auto& parentChildren = overlay.getComponent<Children>();
+
+    auto& titleObj(world.createEntity());
+    auto& titleT = titleObj.addComponent<Transform>(Vector2D(baseX + 10, baseY + 10), 0.0f, 1.0f);
+
+    auto& scoreObj(world.createEntity());
+    auto& scoreT =scoreObj.addComponent<Transform>(Vector2D(baseX, baseY + 100), 0.0f, 1.0f);
+
     parentChildren.children.push_back(&restartButton);
+    parentChildren.children.push_back(&titleObj);
+    parentChildren.children.push_back(&scoreObj);
+
     if (isWin)
     {
+        Label title = {
+            "[Mission Successful]",
+            AssetManager::getFont("OCRA-Header"),
+            {255, 255, 255, 255},
+            "winTitle",
+        };
+        TextureManager::loadLabel(title);
+        title.visible = false;
+        titleObj.addComponent<Label>(title);
+        titleT.position.x = baseX + overlaySprite.dst.w/2 - title.dst.w/2;
 
+        Label score = {
+            std::to_string(world.getMap().landingZones.size()) + " of " + std::to_string(world.getMap().landingZones.size()) + " sites visited.",
+            AssetManager::getFont("OCRA"),
+            {255, 255, 255, 255},
+            "winScore"
+        };
+        TextureManager::loadLabel(score);
+        score.visible = false;
+        scoreObj.addComponent<Label>(score);
+        scoreT.position.x = baseX + overlaySprite.dst.w/2 - score.dst.w/2;
     }
     else
     {
+        Label title = {
+            "[Mission Failed]",
+            AssetManager::getFont("OCRA-Header"),
+            {255, 255, 255, 255},
+            "loseTitle",
+        };
+        TextureManager::loadLabel(title);
+        title.visible = false;
+        titleObj.addComponent<Label>(title);
+        titleT.position.x = baseX + overlaySprite.dst.w/2 - title.dst.w/2;
 
+        if (!playerEntity)
+        {
+            for (auto& e : world.getEntities())
+            {
+                if (e->hasComponent<PlayerTag>())
+                {
+                    playerEntity = e.get();
+                }
+            }
+        }
+
+        auto points = playerEntity->getComponent<Points>();
+
+        Label score = {
+            std::to_string(points.current) + " of " + std::to_string(world.getMap().landingZones.size()) + " sites visited.",
+            AssetManager::getFont("OCRA"),
+            {255, 255, 255, 255},
+            "loseScore"
+        };
+        TextureManager::loadLabel(score);
+        score.visible = false;
+        scoreObj.addComponent<Label>(score);
+        scoreT.position.x = baseX + overlaySprite.dst.w/2 - score.dst.w/2;
     }
 }
 
@@ -552,6 +661,11 @@ void LandingScene::toggleOverlayVisibility(Entity& overlay)
             if (child && child->hasComponent<Sprite>()) {
                 auto& cSprite = child->getComponent<Sprite>();
                 cSprite.visible = newVis;
+            }
+            else if (child && child->hasComponent<Label>())
+            {
+                auto& cLabel = child->getComponent<Label>();
+                cLabel.visible = newVis;
             }
 
             if (child && child->hasComponent<Collider>()) {

@@ -53,6 +53,11 @@ void Game::init(const char* title, const int width, const int height, const bool
             return;
         }
 
+        if (TTF_Init() != 1)
+        {
+            std::cout << "SDL_TTF Init failed!" << std::endl;
+        }
+
         isRunning = true;
     }
     else
