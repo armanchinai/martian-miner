@@ -10,6 +10,8 @@ class Entity;
 enum class EventType {
     Collision,
     PlayerAction,
+    MouseInteraction,
+    KeyboardInteraction
 };
 
 struct BaseEvent {
@@ -35,7 +37,27 @@ struct PlayerActionEvent : BaseEvent {
     PlayerAction action{};
     PlayerActionEvent(Entity* player, const PlayerAction action) : player(player), action(action) {
         type = EventType::PlayerAction;
-    };
+    }
+};
+
+enum class KeyboardInteractionState { Pressed, Released };
+
+struct KeyboardInteractionEvent : BaseEvent {
+    SDL_Keycode key;
+    KeyboardInteractionState state{};
+    KeyboardInteractionEvent(const SDL_Keycode key, const KeyboardInteractionState state) : key(key), state(state) {
+        type = EventType::KeyboardInteraction;
+    }
+};
+
+enum class MouseInteractionState { Pressed, Released, Cancelled };
+
+struct MouseInteractionEvent : BaseEvent {
+    Entity* entity = nullptr;
+    MouseInteractionState state{};
+    MouseInteractionEvent(Entity* entity, const MouseInteractionState state) : entity(entity), state(state) {
+        type = EventType::MouseInteraction;
+    }
 };
 
 #endif //MARTIAN_MINER_BASEEVENT_H

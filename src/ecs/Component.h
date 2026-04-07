@@ -63,6 +63,7 @@ struct Collider
     std::string tag;
     SDL_FRect rect{};
     bool isColliding;
+    bool enabled = true;
 };
 
 struct Animation
@@ -91,7 +92,7 @@ struct TimedSpawner
 struct Clickable {
     std::function<void()> onPressed{};
     std::function<void()> onReleased{};
-    std::function<void()> onCancel{};
+    std::function<void()> onCancelled{};
     bool pressed = false;
 };
 
@@ -99,7 +100,7 @@ struct Parent {
     Entity* parent = nullptr;
 };
 
-struct Child {
+struct Children {
     std::vector<Entity*> children{};
 };
 

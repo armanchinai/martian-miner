@@ -108,6 +108,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     playerCol.rect.w = playerDst.w;
     playerCol.rect.h = playerDst.h;
 
+
+
     auto& asteroidSpawner(world.createEntity());
     std::cout << windowWidth << std::endl;
     auto t = asteroidSpawner.addComponent<Transform>(Vector2D(3750.0f, 48.0f), 0.0f, 1.0f);
@@ -127,6 +129,31 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         asteroid.addComponent<Sprite>(asteroidTex, src, dst);
 
         Collider c = asteroid.addComponent<Collider>("asteroid", dst);
+    });
+
+    world.getEventManager().subscribe([&](const BaseEvent& e) { // Should be made default behaviour in scene
+        if (e.type != EventType::MouseInteraction) {
+            return;
+        }
+
+        const auto mouseInteractionEvent = dynamic_cast<const MouseInteractionEvent&>(e);
+
+        if (!mouseInteractionEvent.entity->hasComponent<Clickable>()) {
+            return;
+        }
+
+        auto& clickable = mouseInteractionEvent.entity->getComponent<Clickable>();
+
+        switch (mouseInteractionEvent.state) {
+            case MouseInteractionState::Pressed:
+                clickable.onPressed();
+                break;
+            case MouseInteractionState::Released:
+                clickable.onReleased();
+                break;
+            case MouseInteractionState::Cancelled:
+                clickable.onCancelled();
+        }
     });
 
     // Landing Zone Listener
@@ -371,5 +398,3 @@ SDL_FColor LandingScene::getBackgroundColour()
     }
     return {0.0f, 0.0f, 0.0f, 1.0f};
 }
-
-

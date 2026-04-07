@@ -10,6 +10,7 @@
 
 #include "managers/AssetManager.h"
 #include "scenes/LandingScene.h"
+#include "scenes/MainMenuScene.h"
 
 std::function<void(std::string)> Game::onSceneChangeRequest;
 
@@ -61,6 +62,7 @@ void Game::init(const char* title, const int width, const int height, const bool
 
     // Load Scenes
     sceneManager.loadScene<LandingScene>("game", width, height);
+    sceneManager.loadScene<MainMenuScene>("menu", width, height);
     sceneManager.changeSceneDeferred("game");
 
     onSceneChangeRequest = [this](const std::string& sceneName)

@@ -16,9 +16,11 @@
 #include "../managers/EventManager.h"
 #include "KeyboardInputSystem.h"
 #include "Map.h"
+#include "MouseInputSystem.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
 #include "SpawnTimerSystem.h"
+#include "UIRenderSystem.h"
 #include "VelocitySystem.h"
 #include "managers/AssetManager.h"
 
@@ -38,11 +40,14 @@ class World
     DestructionSystem destructionSystem;
     AccelerationSystem accelerationSystem;
     VelocitySystem velocitySystem;
+    UIRenderSystem uiRenderSystem;
+    MouseInputSystem mouseInputSystem;
 public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
     {
         keyboardInputSystem.update(entities, event);
+        mouseInputSystem.update(*this, event);
         accelerationSystem.update(entities, deltaTime);
         velocitySystem.update(entities, deltaTime);
         movementSystem.update(entities, deltaTime);
@@ -65,6 +70,7 @@ public:
             }
         }
         renderSystem.render(entities);
+        uiRenderSystem.render(entities);
     }
     Entity& createEntity()
     {

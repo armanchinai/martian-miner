@@ -63,10 +63,12 @@ add_executable(martian-miner src/main.cpp
         src/scenes/LandingScene.cpp
         src/scenes/LandingScene.h
         src/managers/BaseEvent.h
-        src/ecs/system/EventResponseSystem.h
-        src/ecs/system/EventResponseSystem.cpp
         src/utils/RenderUtils.h
         src/ecs/system/UIRenderSystem.h
+        src/ecs/system/MouseInputSystem.h
+        src/ecs/system/MouseInputSystem.cpp
+        src/scenes/MainMenuScene.cpp
+        src/scenes/MainMenuScene.h
 )
 
 target_link_libraries(martian-miner
