@@ -18,6 +18,11 @@ public:
 private:
     Entity* cameraEntity = nullptr;
     Entity* playerEntity = nullptr;
+
+    Entity& createGameOverOverlay(int windowWidth, int windowHeight, bool isWin);
+    void toggleOverlayVisibility(Entity& overlay);
+    void createOverlayComponents(Entity& overlay, bool isWin);
+    bool gameOver = false;
 };
 
 

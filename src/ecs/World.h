@@ -48,7 +48,7 @@ public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
     {
-        keyboardInputSystem.update(entities, event);
+        keyboardInputSystem.update(*this, event);
         mouseInputSystem.update(*this, event);
         accelerationSystem.update(entities, deltaTime);
         velocitySystem.update(entities, deltaTime);

@@ -111,7 +111,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     playerCol.rect.w = playerDst.w;
     playerCol.rect.h = playerDst.h;
 
-
+    auto& winOverlay = createGameOverOverlay(windowWidth, windowHeight, true);
+    auto& loseOverlay = createGameOverOverlay(windowWidth, windowHeight, false);
 
     auto& asteroidSpawner(world.createEntity());
     std::cout << windowWidth << std::endl;
@@ -329,17 +330,19 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             auto& p = player.getComponent<Points>();
             p.current += 1;
         } else if (actionEvent.action == PlayerAction::Death) {
+            if (gameOver == true)
+            {
+                return;
+            }
             auto &playerExplosion (world.createDeferredEntity());
-
             Animation explosionAnim = AssetManager::getAnimation("explosion");
-            playerExplosion.addComponent<Animation>(explosionAnim);
             auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
-
             SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
-
             SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
             SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
             playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
+            auto& animComponent = playerExplosion.addComponent<Animation>(explosionAnim);
+            animComponent.looping = false;
             world.getEventManager().emit(GameStateEvent{GameState::Lose});
         }
     });
@@ -352,19 +355,66 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         const auto& gameStateEvent = static_cast<const GameStateEvent&>(e);
 
         if (gameStateEvent.gameState == GameState::Win) {
+            toggleOverlayVisibility(winOverlay);
             std::cout << "win" << std::endl;
         } else if (gameStateEvent.gameState == GameState::Lose) {
-			Animation explosionAnim = AssetManager::getAnimation("explosion");
-			auto& animComponent = playerExplosion.addComponent<Animation>(explosionAnim);
-			animComponent.looping = false;
-			auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
-
-			SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
-
-			SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
-			SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
-			playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
+            toggleOverlayVisibility(loseOverlay);
             std::cout << "lose" << std::endl;
+        }
+        gameOver = true;
+    });
+
+    // Player Keyboard Input
+    world.getEventManager().subscribe([&](const BaseEvent& e)
+    {
+        if (e.type != EventType::KeyboardInteraction)
+        {
+            return;
+        }
+
+        if (gameOver)
+        {
+            return;
+        }
+
+        const auto& keyboardEvent = static_cast<const KeyboardInteractionEvent&>(e);
+
+        auto& fi = player.getComponent<ForceInput>();
+        if (keyboardEvent.state == KeyboardInteractionState::Pressed)
+        {
+            switch (keyboardEvent.key)
+            {
+            case SDLK_W:
+                fi.inputPositional.y = -100;
+                break;
+            case SDLK_A:
+                fi.inputPositional.x = -100;
+                break;
+            case SDLK_D:
+                fi.inputPositional.x = 100;
+                break;
+            default:
+                break;
+            }
+        }
+        else if (keyboardEvent.state == KeyboardInteractionState::Released)
+        {
+            switch (keyboardEvent.key)
+            {
+            case SDLK_W:
+                fi.inputPositional.y = 0;
+                break;
+            case SDLK_A:
+                fi.inputPositional.x = 0;
+                fi.inputAngular = 0;
+                break;
+            case SDLK_D:
+                fi.inputPositional.x = 0;
+                fi.inputAngular = 0;
+                break;
+            default:
+                break;
+            }
         }
     });
 }
@@ -428,4 +478,86 @@ SDL_FColor LandingScene::getBackgroundColour()
         }
     }
     return {0.0f, 0.0f, 0.0f, 1.0f};
+}
+
+Entity& LandingScene::createGameOverOverlay(int windowWidth, int windowHeight, bool isWin)
+{
+    auto &overlay(world.createEntity());
+    SDL_Texture *panelTex = TextureManager::load("../assets/martian_miner_bg.png");
+    SDL_FRect panelSrc {0, 0 , 1280.0f, 960.0f};
+    auto& overlayT = overlay.addComponent<Transform>(Vector2D((float)windowWidth/2 - panelSrc.w/6, 50.0f), 0.0f, 1.0f);
+    SDL_FRect panelDst {overlayT.position.x, overlayT.position.y, panelSrc.w/3, panelSrc.h/3};
+    overlay.addComponent<Sprite>(panelTex, panelSrc, panelDst, RenderLayer::UI, false);
+    createOverlayComponents(overlay, isWin);
+    return overlay;
+}
+
+void LandingScene::createOverlayComponents(Entity& overlay, bool isWin)
+{
+    if (!overlay.hasComponent<Children>()) {
+        overlay.addComponent<Children>();
+    }
+    auto& overlayTransform = overlay.getComponent<Transform>();
+    auto& overlaySprite = overlay.getComponent<Sprite>();
+
+    float baseX = overlayTransform.position.x;
+    float baseY = overlayTransform.position.y;
+
+    auto& restartButton = world.createEntity();
+
+    SDL_Texture *symbolsTex = TextureManager::load("../assets/ui_symbols.png");
+    SDL_FRect restartButtonSrc = {64, 0, 64, 64};
+
+    auto& restartButtonT = restartButton.addComponent<Transform>(Vector2D(baseX + overlaySprite.dst.w/2 - restartButtonSrc.w/2, baseY + overlaySprite.dst.h - 40), 0.0f, 1.0f);
+
+    SDL_FRect restartButtonDst = {restartButtonT.position.x, restartButtonT.position.y, restartButtonSrc.w, restartButtonSrc.h};
+    restartButton.addComponent<Sprite>(symbolsTex, restartButtonSrc, restartButtonDst, RenderLayer::UI, false);
+    restartButton.addComponent<Collider>("ui", restartButtonDst);
+    auto& clickable = restartButton.addComponent<Clickable>();
+    clickable.onPressed = [&restartButtonT] {
+        restartButtonT.scale = 0.5f;
+    };
+
+    clickable.onReleased = [this, &overlay, &restartButtonT] {
+        restartButtonT.scale = 1.0f;
+        // Restart Game, either reinit scene or reload scene w/ sceneManager
+    };
+
+    clickable.onCancelled = [&restartButtonT] {
+        restartButtonT.scale = 1.0f;
+    };
+
+    restartButton.addComponent<Parent>(&overlay);
+    auto& parentChildren = overlay.getComponent<Children>();
+    parentChildren.children.push_back(&restartButton);
+    if (isWin)
+    {
+
+    }
+    else
+    {
+
+    }
+}
+
+void LandingScene::toggleOverlayVisibility(Entity& overlay)
+{
+    auto &sprite = overlay.getComponent<Sprite>();
+    bool newVis = !sprite.visible;
+    sprite.visible = newVis;
+
+    if (overlay.hasComponent<Children>()) {
+        auto&[children] = overlay.getComponent<Children>();
+        for (const auto& child : children) {
+            if (child && child->hasComponent<Sprite>()) {
+                auto& cSprite = child->getComponent<Sprite>();
+                cSprite.visible = newVis;
+            }
+
+            if (child && child->hasComponent<Collider>()) {
+                auto& collider = child->getComponent<Collider>();
+                collider.enabled = newVis;
+            }
+        }
+    }
 }

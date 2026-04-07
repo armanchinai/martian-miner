@@ -71,6 +71,7 @@ add_executable(martian-miner src/main.cpp
         src/ecs/system/MouseInputSystem.cpp
         src/scenes/MainMenuScene.cpp
         src/scenes/MainMenuScene.h
+        src/ecs/system/KeyboardInputSystem.cpp
 )
 
 target_link_libraries(martian-miner

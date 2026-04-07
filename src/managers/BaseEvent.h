@@ -11,7 +11,7 @@ enum class EventType {
     Collision,
     PlayerAction,
     MouseInteraction,
-    KeyboardInteraction
+    KeyboardInteraction,
     GameState,
 };
 
@@ -59,15 +59,6 @@ struct MouseInteractionEvent : BaseEvent {
     MouseInteractionEvent(Entity* entity, const MouseInteractionState state) : entity(entity), state(state) {
         type = EventType::MouseInteraction;
     }
-};
-
-enum class GameState { Win, Lose };
-
-struct GameStateEvent : BaseEvent {
-    GameState gameState{};
-    GameStateEvent(const GameState gameState) : gameState(gameState) {
-        type = EventType::GameState;
-    };
 };
 
 enum class GameState { Win, Lose };
