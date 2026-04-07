@@ -105,9 +105,10 @@ struct Children {
     std::vector<Entity*> children{};
 };
 
-struct SceneState
+struct Points
 {
-    int coinsCollected = 0;
+    int current = 0;
+    int target{};
 };
 
 struct PlayerTag

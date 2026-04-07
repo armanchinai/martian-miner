@@ -63,6 +63,8 @@ add_executable(martian-miner src/main.cpp
         src/scenes/LandingScene.cpp
         src/scenes/LandingScene.h
         src/managers/BaseEvent.h
+        src/ecs/system/ScoringSystem.h
+        src/ecs/system/ScoringSystem.cpp
         src/utils/RenderUtils.h
         src/ecs/system/UIRenderSystem.h
         src/ecs/system/MouseInputSystem.h

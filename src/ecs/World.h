@@ -19,6 +19,7 @@
 #include "MouseInputSystem.h"
 #include "MovementSystem.h"
 #include "RenderSystem.h"
+#include "ScoringSystem.h"
 #include "SpawnTimerSystem.h"
 #include "UIRenderSystem.h"
 #include "VelocitySystem.h"
@@ -42,6 +43,7 @@ class World
     VelocitySystem velocitySystem;
     UIRenderSystem uiRenderSystem;
     MouseInputSystem mouseInputSystem;
+    ScoringSystem scoringSystem;
 public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
@@ -56,6 +58,7 @@ public:
         cameraSystem.update(entities);
         spawnTimerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
+        scoringSystem.checkScore(*this, entities);
         synchronizeEntities();
         cleanup();
     }
