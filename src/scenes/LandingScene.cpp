@@ -123,7 +123,6 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     playerCol.rect.h = playerDst.h;
 
     // Setup UI
-
     pointsCounterEntity = &world.createEntity();
     pointsCounterEntity->addComponent<Transform>(Vector2D(10.0f, 10.0f), 0.0f, 1.0f);
     Label scoreLabel = {
@@ -138,14 +137,15 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     createGameOverOverlay(windowWidth, windowHeight);
     createOverlayComponents();
 
+    // Setup Asteroids
     auto& asteroidSpawner(world.createEntity());
-    auto t = asteroidSpawner.addComponent<Transform>(Vector2D(3750.0f, 48.0f), 0.0f, 1.0f);
-    asteroidSpawner.addComponent<TimedSpawner>(0.5f, [this, t]
+    //auto t = asteroidSpawner.addComponent<Transform>(Vector2D(3750.0f, 48.0f), 0.0f, 1.0f);
+    asteroidSpawner.addComponent<Timer>(2.5f, [this]
     {
         auto& asteroid(world.createDeferredEntity());
         asteroid.addComponent<ProjectileTag>();
-        asteroid.addComponent<Transform>(Vector2D(t.position.x, t.position.y), 0.0f, 1.0f);
-        asteroid.addComponent<Velocity>(Vector2D(-randomFloat(), randomFloat()), 100.0f);
+        auto& t = asteroid.addComponent<Transform>(Vector2D(rand() % (world.getMap().width * world.getMap().tileWidth), 10), 0.0f, 1.0f);
+        asteroid.addComponent<Velocity>(Vector2D(-randomFloat(), randomFloat()), 200.0f);
 
         Animation asteroidAnim = AssetManager::getAnimation("asteroids");
         asteroid.addComponent<Animation>(asteroidAnim);
@@ -154,6 +154,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         SDL_FRect src {0, 0, 32, 32};
         SDL_FRect dst {t.position.x, t.position.y, 32, 32};
         asteroid.addComponent<Sprite>(asteroidTex, src, dst);
+
+        std::cout << "Spawned asteroid at: " << t.position.tostring() << std::endl;
 
         Collider c = asteroid.addComponent<Collider>("asteroid", dst);
     });

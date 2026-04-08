@@ -21,7 +21,7 @@
 #include "PreRenderSystem.h"
 #include "RenderSystem.h"
 #include "ScoringSystem.h"
-#include "SpawnTimerSystem.h"
+#include "TimerSystem.h"
 #include "UIRenderSystem.h"
 #include "VelocitySystem.h"
 #include "managers/AudioEventQueue.h"
@@ -38,7 +38,7 @@ class World
     EventManager eventManager;
     AnimationSystem animationSystem;
     CameraSystem cameraSystem;
-    SpawnTimerSystem spawnTimerSystem;
+    TimerSystem timerSystem;
     DestructionSystem destructionSystem;
     AccelerationSystem accelerationSystem;
     VelocitySystem velocitySystem;
@@ -59,7 +59,7 @@ public:
         collisionSystem.update(*this);
         animationSystem.update(entities, deltaTime);
         cameraSystem.update(entities);
-        spawnTimerSystem.update(entities, deltaTime);
+        timerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
         scoringSystem.checkScore(*this, entities);
         audioEventQueue.process();

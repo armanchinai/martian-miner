@@ -33,10 +33,10 @@ public:
             if (entity->hasComponent<Transform>() && entity->hasComponent<ProjectileTag>())
             {
                 auto& t = entity->getComponent<Transform>();
-                if (t.position.x > camera.view.x + camera.view.w ||
-                    t.position.y > camera.view.y + camera.view.h ||
-                    t.position.x < camera.view.x ||
-                    t.position.y < camera.view.y)
+                if (t.position.x > camera.worldWidth ||
+                    t.position.y > camera.worldHeight ||
+                    t.position.x < 0 ||
+                    t.position.y < 0)
                 {
                     entity->destroy();
                 }

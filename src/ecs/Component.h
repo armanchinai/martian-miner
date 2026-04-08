@@ -84,11 +84,11 @@ struct Camera
     float worldHeight;
 };
 
-struct TimedSpawner
-{
-    float spawnInterval;
-    std::function<void()> spawnCallback;
-    float timer;
+struct Timer {
+    float interval;
+    std::function<void()> timerCallback;
+    bool runOnce = false;
+    float counter;
 };
 
 struct Clickable {

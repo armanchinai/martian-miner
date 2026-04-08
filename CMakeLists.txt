@@ -56,7 +56,6 @@ add_executable(martian-miner src/main.cpp
         src/managers/AssetManager.cpp
         src/ecs/system/AnimationSystem.h
         src/ecs/system/CameraSystem.h
-        src/ecs/system/SpawnTimerSystem.h
         src/ecs/system/DestructionSystem.h
         src/managers/Scene.h
         src/managers/Scene.cpp
@@ -79,6 +78,7 @@ add_executable(martian-miner src/main.cpp
         src/managers/AudioManager.h
         src/managers/AudioManager.cpp
         src/managers/AudioEventQueue.h
+        src/ecs/system/TimerSystem.h
 )
 
 target_link_libraries(martian-miner
