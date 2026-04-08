@@ -22,9 +22,17 @@ private:
     Entity* titleEntity = nullptr;
     Entity* scoreEntity = nullptr;
     Entity* overlayEntity = nullptr;
+    Entity* pointsCounterEntity = nullptr;
 
     void createGameOverOverlay(int windowWidth, int windowHeight);
     void toggleOverlayVisibility();
+
+    void onMouseInteraction(const MouseInteractionEvent &mouseInteraction) override;
+    void onCollision(const CollisionEvent &collisionEvent) override;
+    void onKeyboardInteraction(const KeyboardInteractionEvent &event) override;
+    void onPlayerAction(const PlayerActionEvent &playerActionEvent) override;
+    void onGameStateChanged(const GameStateEvent &gameStateEvent) override;
+
     void createOverlayComponents();
     void updateOverlayComponents(bool isWin);
     bool gameOver = false;

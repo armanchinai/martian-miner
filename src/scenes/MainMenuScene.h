@@ -11,6 +11,7 @@ class MainMenuScene : public Scene {
 public:
     MainMenuScene(const char* name, int windowWidth, int windowHeight);
     SDL_FColor getBackgroundColour() override;
+    void onMouseInteraction(const MouseInteractionEvent& mouseInteraction) override;
 };
 
 

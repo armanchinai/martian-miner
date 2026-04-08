@@ -45,32 +45,21 @@ Scene(name, windowWidth, windowHeight)
     };
 
     world.getEventManager().subscribe([&](const BaseEvent& e) {
-        if (e.type != EventType::MouseInteraction) {
-            return;
-        }
 
-        const auto mouseInteractionEvent = dynamic_cast<const MouseInteractionEvent&>(e);
-
-        if (!mouseInteractionEvent.entity->hasComponent<Clickable>()) {
-            return;
-        }
-
-        auto& clickable = mouseInteractionEvent.entity->getComponent<Clickable>();
-
-        switch (mouseInteractionEvent.state) {
-            case MouseInteractionState::Pressed:
-                clickable.onPressed();
-                break;
-            case MouseInteractionState::Released:
-                clickable.onReleased();
-                world.getAudioEventQueue().push(std::make_unique<AudioEvent>("button"));
-                break;
-            case MouseInteractionState::Cancelled:
-                clickable.onCancelled();
-        }
     });
 }
 
 SDL_FColor MainMenuScene::getBackgroundColour() {
     return {0.05f, 0.0f, 0.08f};
+}
+
+void MainMenuScene::onMouseInteraction(const MouseInteractionEvent& mouseInteraction) {
+    Scene::onMouseInteraction(mouseInteraction);
+    if (!mouseInteraction.entity->hasComponent<Clickable>()) {
+        return;
+    }
+
+    if (mouseInteraction.state == MouseInteractionState::Released) {
+        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("button"));
+    }
 }

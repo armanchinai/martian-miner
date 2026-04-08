@@ -124,8 +124,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
 
     // Setup UI
 
-    auto& labelEntity(world.createEntity());
-    labelEntity.addComponent<Transform>(Vector2D(10.0f, 10.0f), 0.0f, 1.0f);
+    pointsCounterEntity = &world.createEntity();
+    pointsCounterEntity->addComponent<Transform>(Vector2D(10.0f, 10.0f), 0.0f, 1.0f);
     Label scoreLabel = {
         "Landings: 0/" + std::to_string(points.target),
         AssetManager::getFont("OCRA"),
@@ -133,7 +133,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         "scoreCounter",
     };
     TextureManager::loadLabel(scoreLabel);
-    labelEntity.addComponent<Label>(scoreLabel);
+    pointsCounterEntity->addComponent<Label>(scoreLabel);
 
     createGameOverOverlay(windowWidth, windowHeight);
     createOverlayComponents();
@@ -156,320 +156,6 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         asteroid.addComponent<Sprite>(asteroidTex, src, dst);
 
         Collider c = asteroid.addComponent<Collider>("asteroid", dst);
-    });
-
-    // Mouse Interaction Listener
-    world.getEventManager().subscribe([&](const BaseEvent& e) { // Should be made default behaviour in scene
-        if (e.type != EventType::MouseInteraction) {
-            return;
-        }
-
-        const auto mouseInteractionEvent = dynamic_cast<const MouseInteractionEvent&>(e);
-
-        if (!mouseInteractionEvent.entity->hasComponent<Clickable>()) {
-            return;
-        }
-
-        auto& clickable = mouseInteractionEvent.entity->getComponent<Clickable>();
-        auto& collider = mouseInteractionEvent.entity->getComponent<Collider>();
-
-        if (!collider.enabled) {
-            return;
-        }
-
-        switch (mouseInteractionEvent.state) {
-            case MouseInteractionState::Pressed:
-                clickable.onPressed();
-                break;
-            case MouseInteractionState::Released:
-                clickable.onReleased();
-                world.getAudioEventQueue().push(std::make_unique<AudioEvent>("button"));
-                break;
-            case MouseInteractionState::Cancelled:
-                clickable.onCancelled();
-        }
-    });
-
-    // Landing Zone Listener
-    world.getEventManager().subscribe([&](const BaseEvent& e) {
-        if (e.type != EventType::Collision) {
-            return;
-        }
-
-        const auto collisionEvent = dynamic_cast<const CollisionEvent &>(e);
-
-        Entity* entity = nullptr;
-        Entity* other = nullptr;
-
-        if (!Collision::getCollisionParticipants(collisionEvent, "player", "landingZone", entity, other))
-        {
-            return;
-        }
-
-        if (collisionEvent.state == CollisionState::Enter)
-        {
-            if (entity->hasComponent<PlayerTag>())
-            {
-                auto& playerTag = entity->getComponent<PlayerTag>();
-                playerTag.withinLandingZone = true;
-            }
-        }
-        else if (collisionEvent.state == CollisionState::Exit)
-        {
-            if (entity->hasComponent<PlayerTag>())
-            {
-                auto& playerTag = entity->getComponent<PlayerTag>();
-                playerTag.withinLandingZone = false;
-                other->destroy();
-                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Interact});
-            }
-        }
-    });
-
-    // Barrier/Wall Listener
-    world.getEventManager().subscribe([&](const BaseEvent& e) {
-        if (e.type != EventType::Collision) {
-            return;
-        }
-
-        const auto collisionEvent = dynamic_cast<const CollisionEvent &>(e);
-
-        Entity* entity = nullptr;
-        Entity* other = nullptr;
-
-        bool isWall = false;
-        bool isAsteroid = false;
-        if (Entity* wall = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "wall", entity, wall))
-        {
-            other = wall;
-            isWall = true;
-        }
-        else if (Entity* barrier = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "barrier", entity, barrier))
-        {
-            other = barrier;
-        }
-        else if (Entity* asteroid = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "asteroid", entity, asteroid)) {
-            other = asteroid;
-            isAsteroid = true;
-        } else if (Collision::getCollisionParticipants(collisionEvent, "wall", "asteroid", entity, asteroid)) {
-            isAsteroid = true;
-            isWall = true;
-            asteroid->destroy();
-            return;
-        } else {
-            return;
-        }
-
-        auto& t = entity->getComponent<Transform>();
-        auto& v = entity->getComponent<Velocity>();
-        auto& playerRect = entity->getComponent<Collider>().rect;
-        auto& wallRect   = other->getComponent<Collider>().rect;
-
-        const float playerCenterX = playerRect.x + playerRect.w  * 0.5f;
-        const float playerCenterY = playerRect.y + playerRect.h * 0.5f;
-
-        const float wallCenterX = wallRect.x + wallRect.w  * 0.5f;
-        const float wallCenterY = wallRect.y + wallRect.h * 0.5f;
-
-        const float playerHalfW = playerRect.w  * 0.5f;
-        const float playerHalfH = playerRect.h * 0.5f;
-
-        const float wallHalfW = wallRect.w  * 0.5f;
-        const float wallHalfH = wallRect.h * 0.5f;
-
-        const float dx = playerCenterX - wallCenterX;
-        const float dy = playerCenterY - wallCenterY;
-
-        const float overlapX = playerHalfW + wallHalfW - std::abs(dx);
-
-        if (const float overlapY = playerHalfH + wallHalfH - std::abs(dy); overlapX > 0.0f && overlapY > 0.0f)
-        {
-            if (overlapX < overlapY)
-            {
-                if (dx > 0) {
-                    t.position.x += overlapX;
-                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
-                    v.direction.x = 0;
-                    if (v.direction.y < 0) {
-                        v.direction.y = -1;
-                    } else {
-                        v.direction.y = 1;
-                    }
-                }
-                else {
-                    t.position.x -= overlapX;
-                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
-                    v.direction.x = 0;
-                    if (v.direction.y < 0) {
-                        v.direction.y = -1;
-                    } else {
-                        v.direction.y = 1;
-                    }
-                }
-            }
-            else
-            {
-                if (dy > 0) {
-                    t.position.y += overlapY;
-                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
-                    v.direction.y = 0;
-                    if (v.direction.x < 0) {
-                        v.direction.x = -1;
-                    } else {
-                        v.direction.x = 1;
-                    }
-                }
-                else {
-                    t.position.y -= overlapY;
-                    v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
-                    v.direction.y = 0;
-                    v.direction.x = 0;
-                    v.magnitude = 0;
-                }
-            }
-
-            playerRect.x = t.position.x;
-            playerRect.y = t.position.y;
-        }
-
-        if (isWall)
-        {
-            auto& tag = entity->getComponent<PlayerTag>();
-            if (!tag.withinLandingZone) {
-                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
-            } else if (int angle = (static_cast<int>(t.rotation) % 360 + 360) % 360; (angle > 15 && angle < 345) || v.magnitude > 100.0f) {
-                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
-            }
-        }
-        if (isAsteroid) {
-            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
-        }
-    });
-
-    // PlayerAction
-    world.getEventManager().subscribe([&](const BaseEvent& e) {
-        if (e.type != EventType::PlayerAction)
-        {
-            return;
-        }
-
-        const auto& actionEvent = static_cast<const PlayerActionEvent&>(e);
-
-        if (actionEvent.action == PlayerAction::Interact)
-        {
-            auto& p = player.getComponent<Points>();
-            p.current += 1;
-
-            std::stringstream ss;
-            ss << "Landings: " << p.current << "/" << p.target;
-            auto& label = labelEntity.getComponent<Label>();
-            label.text = ss.str();
-            label.dirty = true;
-
-            world.getAudioEventQueue().push(std::make_unique<AudioEvent>("coin"));
-
-        } else if (actionEvent.action == PlayerAction::Death) {
-            if (gameOver == true)
-            {
-                return;
-            }
-            auto &playerExplosion (world.createDeferredEntity());
-            Animation explosionAnim = AssetManager::getAnimation("explosion");
-            auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
-            SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
-            SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
-            SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
-            playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
-            auto& animComponent = playerExplosion.addComponent<Animation>(explosionAnim);
-            animComponent.looping = false;
-            AudioManager::muteLooping();
-            world.getAudioEventQueue().push(std::make_unique<AudioEvent>("explosion"));
-            world.getEventManager().emit(GameStateEvent{GameState::Lose});
-        }
-    });
-
-    world.getEventManager().subscribe([&](const BaseEvent& e) {
-        if (e.type != EventType::GameState) {
-            return;
-        }
-
-        if (gameOver == true)
-        {
-            return;
-        }
-
-        const auto& gameStateEvent = static_cast<const GameStateEvent&>(e);
-
-        if (gameStateEvent.gameState == GameState::Win) {
-            updateOverlayComponents(true);
-            toggleOverlayVisibility();
-        } else if (gameStateEvent.gameState == GameState::Lose) {
-            updateOverlayComponents(false);
-            toggleOverlayVisibility();
-        }
-        gameOver = true;
-    });
-
-    // Player Keyboard Input
-    world.getEventManager().subscribe([&](const BaseEvent& e)
-    {
-        if (e.type != EventType::KeyboardInteraction)
-        {
-            return;
-        }
-
-        if (gameOver)
-        {
-            return;
-        }
-
-        const auto& keyboardEvent = static_cast<const KeyboardInteractionEvent&>(e);
-
-        auto& fi = player.getComponent<ForceInput>();
-        if (keyboardEvent.state == KeyboardInteractionState::Pressed)
-        {
-            if (keyboardEvent.key == SDLK_W || keyboardEvent.key == SDLK_A || keyboardEvent.key == SDLK_D) {
-                AudioManager::unmuteLooping();
-            }
-
-            switch (keyboardEvent.key)
-            {
-            case SDLK_W:
-                fi.inputPositional.y = -100;
-                break;
-            case SDLK_A:
-                fi.inputPositional.x = -100;
-                break;
-            case SDLK_D:
-                fi.inputPositional.x = 100;
-                break;
-            default:
-                break;
-            }
-        }
-        else if (keyboardEvent.state == KeyboardInteractionState::Released)
-        {
-            switch (keyboardEvent.key)
-            {
-            case SDLK_W:
-                fi.inputPositional.y = 0;
-                break;
-            case SDLK_A:
-                fi.inputPositional.x = 0;
-                fi.inputAngular = 0;
-                break;
-            case SDLK_D:
-                fi.inputPositional.x = 0;
-                fi.inputAngular = 0;
-                break;
-            default:
-                break;
-            }
-
-            if (fi.inputPositional.y == 0 && fi.inputPositional.x == 0 && fi.inputAngular == 0) {
-                AudioManager::muteLooping();
-            }
-        }
     });
 
     // GameOver player remover
@@ -696,4 +382,279 @@ void LandingScene::toggleOverlayVisibility()
             }
         }
     }
+}
+
+void LandingScene::onMouseInteraction(const MouseInteractionEvent& mouseInteraction) {
+    Scene::onMouseInteraction(mouseInteraction);
+    if (!mouseInteraction.entity->hasComponent<Clickable>()) {
+        return;
+    }
+
+    if (mouseInteraction.state == MouseInteractionState::Released) {
+        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("button"));
+    }
+}
+
+void LandingScene::onCollision(const CollisionEvent& collisionEvent) {
+    Entity* entity = nullptr;
+    Entity* other = nullptr;
+
+    bool isWall = false;
+    bool isAsteroid = false;
+    bool isLandingZone = false;
+    if (Entity* wall = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "wall", entity, wall))
+    {
+        other = wall;
+        isWall = true;
+    }
+    else if (Entity* barrier = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "barrier", entity, barrier))
+    {
+        other = barrier;
+    }
+    else if (Entity* asteroid = nullptr; Collision::getCollisionParticipants(collisionEvent, "player", "asteroid", entity, asteroid)) {
+        other = asteroid;
+        isAsteroid = true;
+    } else if (Collision::getCollisionParticipants(collisionEvent, "wall", "asteroid", entity, asteroid)) {
+        isAsteroid = true;
+        isWall = true;
+        asteroid->destroy();
+        return;
+    } else if (Collision::getCollisionParticipants(collisionEvent, "player", "landingZone", entity, other)) {
+        isLandingZone = true;
+    } else {
+        return;
+    }
+
+    if (isLandingZone) {
+        if (collisionEvent.state == CollisionState::Enter)
+        {
+            if (entity->hasComponent<PlayerTag>())
+            {
+                auto& playerTag = entity->getComponent<PlayerTag>();
+                playerTag.withinLandingZone = true;
+            }
+        }
+        else if (collisionEvent.state == CollisionState::Exit)
+        {
+            if (entity->hasComponent<PlayerTag>())
+            {
+                auto& playerTag = entity->getComponent<PlayerTag>();
+                playerTag.withinLandingZone = false;
+                other->destroy();
+                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Interact});
+            }
+        }
+        return;
+    }
+
+    auto& t = entity->getComponent<Transform>();
+    auto& v = entity->getComponent<Velocity>();
+    auto& playerRect = entity->getComponent<Collider>().rect;
+    auto& wallRect   = other->getComponent<Collider>().rect;
+
+    const float playerCenterX = playerRect.x + playerRect.w  * 0.5f;
+    const float playerCenterY = playerRect.y + playerRect.h * 0.5f;
+
+    const float wallCenterX = wallRect.x + wallRect.w  * 0.5f;
+    const float wallCenterY = wallRect.y + wallRect.h * 0.5f;
+
+    const float playerHalfW = playerRect.w  * 0.5f;
+    const float playerHalfH = playerRect.h * 0.5f;
+
+    const float wallHalfW = wallRect.w  * 0.5f;
+    const float wallHalfH = wallRect.h * 0.5f;
+
+    const float dx = playerCenterX - wallCenterX;
+    const float dy = playerCenterY - wallCenterY;
+
+    const float overlapX = playerHalfW + wallHalfW - std::abs(dx);
+
+    if (isWall)
+    {
+        auto& tag = entity->getComponent<PlayerTag>();
+        if (!tag.withinLandingZone) {
+            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+        } else if (int angle = (static_cast<int>(t.rotation) % 360 + 360) % 360; (angle > 15 && angle < 345) || v.magnitude > 100.0f) {
+            world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+        }
+    }
+    if (isAsteroid) {
+        world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Death});
+    }
+
+    if (const float overlapY = playerHalfH + wallHalfH - std::abs(dy); overlapX > 0.0f && overlapY > 0.0f)
+    {
+        if (overlapX < overlapY)
+        {
+            if (dx > 0) {
+                t.position.x += overlapX;
+                v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                v.direction.x = 0;
+                if (v.direction.y < 0) {
+                    v.direction.y = -1;
+                } else {
+                    v.direction.y = 1;
+                }
+            }
+            else {
+                t.position.x -= overlapX;
+                v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.x)*(v.magnitude*v.direction.x));
+                v.direction.x = 0;
+                if (v.direction.y < 0) {
+                    v.direction.y = -1;
+                } else {
+                    v.direction.y = 1;
+                }
+            }
+        }
+        else
+        {
+            if (dy > 0) {
+                t.position.y += overlapY;
+                v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
+                v.direction.y = 0;
+                if (v.direction.x < 0) {
+                    v.direction.x = -1;
+                } else {
+                    v.direction.x = 1;
+                }
+            }
+            else {
+                t.position.y -= overlapY;
+                v.magnitude = std::sqrt((v.magnitude*v.magnitude) - (v.magnitude*v.direction.y)*(v.magnitude*v.direction.y));
+                v.direction.y = 0;
+                v.direction.x = 0;
+                v.magnitude = 0;
+            }
+        }
+
+        playerRect.x = t.position.x;
+        playerRect.y = t.position.y;
+    }
+}
+
+void LandingScene::onKeyboardInteraction(const KeyboardInteractionEvent& keyboardInteraction) {
+    for (auto& entity : world.getEntities())
+    {
+        if (playerEntity)
+        {
+            break;
+        }
+
+        if (entity->hasComponent<PlayerTag>())
+        {
+            playerEntity = entity.get();
+        }
+    }
+
+    auto& fi = playerEntity->getComponent<ForceInput>();
+    if (keyboardInteraction.state == KeyboardInteractionState::Pressed)
+    {
+        if (keyboardInteraction.key == SDLK_W || keyboardInteraction.key == SDLK_A || keyboardInteraction.key == SDLK_D) {
+            AudioManager::unmuteLooping();
+        }
+
+        switch (keyboardInteraction.key)
+        {
+            case SDLK_W:
+                fi.inputPositional.y = -100;
+                break;
+            case SDLK_A:
+                fi.inputPositional.x = -100;
+                break;
+            case SDLK_D:
+                fi.inputPositional.x = 100;
+                break;
+            default:
+                break;
+        }
+    }
+    else if (keyboardInteraction.state == KeyboardInteractionState::Released)
+    {
+        switch (keyboardInteraction.key)
+        {
+            case SDLK_W:
+                fi.inputPositional.y = 0;
+                break;
+            case SDLK_A:
+                fi.inputPositional.x = 0;
+                fi.inputAngular = 0;
+                break;
+            case SDLK_D:
+                fi.inputPositional.x = 0;
+                fi.inputAngular = 0;
+                break;
+            default:
+                break;
+        }
+
+        if (fi.inputPositional.y == 0 && fi.inputPositional.x == 0 && fi.inputAngular == 0) {
+            AudioManager::muteLooping();
+        }
+    }
+}
+
+void LandingScene::onPlayerAction(const PlayerActionEvent& playerActionEvent) {
+    for (auto& entity : world.getEntities())
+    {
+        if (playerEntity)
+        {
+            break;
+        }
+
+        if (entity->hasComponent<PlayerTag>())
+        {
+            playerEntity = entity.get();
+        }
+    }
+
+    if (playerActionEvent.action == PlayerAction::Interact)
+    {
+        auto& p = playerEntity->getComponent<Points>();
+        p.current += 1;
+
+        std::stringstream ss;
+        ss << "Landings: " << p.current << "/" << p.target;
+        auto& label = pointsCounterEntity->getComponent<Label>();
+        label.text = ss.str();
+        label.dirty = true;
+
+        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("coin"));
+
+    } else if (playerActionEvent.action == PlayerAction::Death) {
+        if (gameOver == true)
+        {
+            return;
+        }
+        auto& playerT = playerEntity->getComponent<Transform>();
+
+        auto &playerExplosion (world.createDeferredEntity());
+        Animation explosionAnim = AssetManager::getAnimation("explosion");
+        auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
+        SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
+        SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
+        SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
+        playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
+        auto& animComponent = playerExplosion.addComponent<Animation>(explosionAnim);
+        animComponent.looping = false;
+        AudioManager::muteLooping();
+        world.getAudioEventQueue().push(std::make_unique<AudioEvent>("explosion"));
+        world.getEventManager().emit(GameStateEvent{GameState::Lose});
+    }
+}
+
+void LandingScene::onGameStateChanged(const GameStateEvent& gameStateEvent) {
+    if (gameOver == true)
+    {
+        return;
+    }
+
+    if (gameStateEvent.gameState == GameState::Win) {
+        updateOverlayComponents(true);
+        toggleOverlayVisibility();
+    } else if (gameStateEvent.gameState == GameState::Lose) {
+        updateOverlayComponents(false);
+        toggleOverlayVisibility();
+    }
+    gameOver = true;
 }

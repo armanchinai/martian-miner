@@ -46,7 +46,7 @@ public:
             [=]() {
                 auto scene = std::make_unique<SceneType>(sceneName, windowWidth, windowHeight);
 
-                // Access the Scene base class directly
+                // Inject SceneSwap Handler
                 Scene& base = *scene;
                 base.world.getEventManager().subscribe(
                     [this](const BaseEvent& e) {
@@ -58,6 +58,21 @@ public:
                         changeSceneDeferred(sse.nextSceneName);
                     }
                 );
+
+                // Inject On(event) handlers
+                base.world.getEventManager().subscribe([&] (const BaseEvent& e) {
+                    if (e.type == EventType::Collision) {
+                        base.onCollision(dynamic_cast<const CollisionEvent &>(e));
+                    } else if (e.type == EventType::MouseInteraction) {
+                        base.onMouseInteraction(dynamic_cast<const MouseInteractionEvent &>(e));
+                    } else if (e.type == EventType::KeyboardInteraction) {
+                        base.onKeyboardInteraction(dynamic_cast<const KeyboardInteractionEvent &>(e));
+                    } else if (e.type == EventType::GameState) {
+                        base.onGameStateChanged(dynamic_cast<const GameStateEvent &>(e));
+                    } else if (e.type == EventType::PlayerAction) {
+                        base.onPlayerAction(dynamic_cast<const PlayerActionEvent &>(e));
+                    }
+                });
 
                 return scene;
             },
