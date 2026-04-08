@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by wifir on 2026-03-30.
 //
@@ -13,11 +15,19 @@ enum class EventType {
     MouseInteraction,
     KeyboardInteraction,
     GameState,
+    SceneSwap,
 };
 
 struct BaseEvent {
     EventType type{};
     virtual ~BaseEvent() = default;
+};
+
+struct SceneSwapEvent : BaseEvent {
+    std::string nextSceneName;
+    explicit SceneSwapEvent(std::string  nextSceneName) : nextSceneName(std::move(nextSceneName)) {
+        type = EventType::SceneSwap;
+    }
 };
 
 enum class CollisionState { Enter, Stay, Exit };

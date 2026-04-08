@@ -24,7 +24,6 @@ public:
             {
                 if (auto& label = e->getComponent<Label>(); label.dirty)
                 {
-                    std::cout << "hello";
                     TextureManager::updateLabel(label);
                 }
             }
