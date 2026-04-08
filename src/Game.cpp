@@ -12,8 +12,6 @@
 #include "scenes/LandingScene.h"
 #include "scenes/MainMenuScene.h"
 
-std::function<void(std::string)> Game::onSceneChangeRequest;
-
 Game::Game()
 {
 
@@ -65,30 +63,16 @@ void Game::init(const char* title, const int width, const int height, const bool
         isRunning = false;
     }
 
+    // Load Audio
+    audioManager.loadAudio("thruster", "../assets/audio/fronbondi_skegs-sfx-looking-straight-into-a-burning-rocket-engine-sound-effect-283448.ogg");
+    audioManager.loadAudio("explosion", "../assets/audio/482993__v-ktor__large-explosion-1.ogg");
+    audioManager.loadAudio("coin", "../assets/audio/driken5482-retro-coin-4-236671.ogg");
+    audioManager.loadAudio("button", "../assets/audio/freesound_community-menu-button-88360.ogg");
+
     // Load Scenes
     sceneManager.loadScene<LandingScene>("game", width, height);
     sceneManager.loadScene<MainMenuScene>("menu", width, height);
     sceneManager.changeSceneDeferred("menu");
-
-    onSceneChangeRequest = [this](const std::string& sceneName)
-    {
-        std::cout << sceneName << ":" << sceneManager.currentScene->getName() << std::endl;
-        if (sceneManager.currentScene->getName() == "level2" && sceneName == "level2")
-        {
-            std::cout << "You win!" << std::endl;
-            isRunning = false;
-            return;
-        }
-
-        if (sceneName == "gameover")
-        {
-            std::cout << "You lose!" << std::endl;
-            isRunning = false;
-            return;
-        }
-
-        sceneManager.changeSceneDeferred(sceneName);
-    };
 }
 
 void Game::handleEvents()

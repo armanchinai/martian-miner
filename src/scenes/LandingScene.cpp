@@ -48,6 +48,9 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     AssetManager::loadFont("OCRA", "../assets/fonts/OCRA.ttf", 16.0f);
     AssetManager::loadFont("OCRA-Header", "../assets/fonts/OCRA.ttf", 24.0f);
 
+    AudioManager::playLooping("thruster");
+    AudioManager::muteLooping();
+
     for (const SDL_FRect& rect : world.getMap().landingZones)
     {
         auto& e = world.createEntity();
@@ -180,6 +183,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
                 break;
             case MouseInteractionState::Released:
                 clickable.onReleased();
+                world.getAudioEventQueue().push(std::make_unique<AudioEvent>("button"));
                 break;
             case MouseInteractionState::Cancelled:
                 clickable.onCancelled();
@@ -362,6 +366,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             label.text = ss.str();
             label.dirty = true;
 
+            world.getAudioEventQueue().push(std::make_unique<AudioEvent>("coin"));
 
         } else if (actionEvent.action == PlayerAction::Death) {
             if (gameOver == true)
@@ -377,6 +382,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
             auto& animComponent = playerExplosion.addComponent<Animation>(explosionAnim);
             animComponent.looping = false;
+            AudioManager::muteLooping();
+            world.getAudioEventQueue().push(std::make_unique<AudioEvent>("explosion"));
             world.getEventManager().emit(GameStateEvent{GameState::Lose});
         }
     });
@@ -421,6 +428,10 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         auto& fi = player.getComponent<ForceInput>();
         if (keyboardEvent.state == KeyboardInteractionState::Pressed)
         {
+            if (keyboardEvent.key == SDLK_W || keyboardEvent.key == SDLK_A || keyboardEvent.key == SDLK_D) {
+                AudioManager::unmuteLooping();
+            }
+
             switch (keyboardEvent.key)
             {
             case SDLK_W:
@@ -453,6 +464,10 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
                 break;
             default:
                 break;
+            }
+
+            if (fi.inputPositional.y == 0 && fi.inputPositional.x == 0 && fi.inputAngular == 0) {
+                AudioManager::muteLooping();
             }
         }
     });

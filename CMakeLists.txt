@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 #Set SDL3 include and lib paths
 if (WIN32)
-    set(SDL3_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3-3.2.20")
+    set(SDL3_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3-3.4.4")
     set(SDL3_IMAGE_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3_image-3.2.4")
     set(SDL3_MIXER_PATH "${PROJECT_SOURCE_DIR}/src/vendor/sdl3_mixer 3.1.0")
     set(SDL3_TTF_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3_ttf-3.2.2")
@@ -75,12 +75,15 @@ add_executable(martian-miner src/main.cpp
         src/scenes/MainMenuScene.cpp
         src/scenes/MainMenuScene.h
         src/ecs/system/KeyboardInputSystem.cpp
-        src/ecs/system/HUDSystem.h
         src/ecs/system/PreRenderSystem.h
+        src/managers/AudioManager.h
+        src/managers/AudioManager.cpp
+        src/managers/AudioEventQueue.h
 )
 
 target_link_libraries(martian-miner
         SDL3
         SDL3_IMAGE
         SDL3_TTF
+        SDL3_mixer
 )

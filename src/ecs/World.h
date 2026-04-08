@@ -24,7 +24,7 @@
 #include "SpawnTimerSystem.h"
 #include "UIRenderSystem.h"
 #include "VelocitySystem.h"
-#include "managers/AssetManager.h"
+#include "managers/AudioEventQueue.h"
 
 class World
 {
@@ -46,6 +46,7 @@ class World
     MouseInputSystem mouseInputSystem;
     ScoringSystem scoringSystem;
     PreRenderSystem preRenderSystem;
+    AudioEventQueue audioEventQueue;
 public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
@@ -61,6 +62,7 @@ public:
         spawnTimerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
         scoringSystem.checkScore(*this, entities);
+        audioEventQueue.process();
         preRenderSystem.update(entities);
         synchronizeEntities();
         cleanup();
@@ -124,6 +126,10 @@ public:
     Map& getMap()
     {
         return map;
+    }
+
+    AudioEventQueue& getAudioEventQueue() {
+        return audioEventQueue;
     }
 };
 

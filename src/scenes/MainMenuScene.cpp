@@ -63,6 +63,7 @@ Scene(name, windowWidth, windowHeight)
                 break;
             case MouseInteractionState::Released:
                 clickable.onReleased();
+                world.getAudioEventQueue().push(std::make_unique<AudioEvent>("button"));
                 break;
             case MouseInteractionState::Cancelled:
                 clickable.onCancelled();

@@ -2,6 +2,7 @@
 #include <SDL3/sdl.h>
 
 #include "World.h"
+#include "managers/AudioManager.h"
 #include "managers/SceneManager.h"
 
 class Game {
@@ -31,4 +32,5 @@ private:
 	SDL_Window* window = nullptr;
 	SDL_Event event;
 	SceneManager sceneManager;
+	AudioManager audioManager;
 };
