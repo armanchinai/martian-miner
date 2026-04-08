@@ -18,7 +18,9 @@
 #include "Map.h"
 #include "MouseInputSystem.h"
 #include "MovementSystem.h"
+#include "PreRenderSystem.h"
 #include "RenderSystem.h"
+#include "ScoringSystem.h"
 #include "SpawnTimerSystem.h"
 #include "UIRenderSystem.h"
 #include "VelocitySystem.h"
@@ -42,11 +44,13 @@ class World
     VelocitySystem velocitySystem;
     UIRenderSystem uiRenderSystem;
     MouseInputSystem mouseInputSystem;
+    ScoringSystem scoringSystem;
+    PreRenderSystem preRenderSystem;
 public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
     {
-        keyboardInputSystem.update(entities, event);
+        keyboardInputSystem.update(*this, event);
         mouseInputSystem.update(*this, event);
         accelerationSystem.update(entities, deltaTime);
         velocitySystem.update(entities, deltaTime);
@@ -56,6 +60,8 @@ public:
         cameraSystem.update(entities);
         spawnTimerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
+        scoringSystem.checkScore(*this, entities);
+        preRenderSystem.update(entities);
         synchronizeEntities();
         cleanup();
     }

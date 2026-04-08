@@ -3,6 +3,9 @@
 //
 
 #include "LandingScene.h"
+
+#include <sstream>
+
 #include "managers/AssetManager.h"
 #include "utils/Collision.h"
 
@@ -41,6 +44,10 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         {8 + 32 * 4, 8 + 32 * 5, 16, 16},
     })
 {
+    // Load Fonts
+    AssetManager::loadFont("OCRA", "../assets/fonts/OCRA.ttf", 16.0f);
+    AssetManager::loadFont("OCRA-Header", "../assets/fonts/OCRA.ttf", 24.0f);
+
     for (const SDL_FRect& rect : world.getMap().landingZones)
     {
         auto& e = world.createEntity();
@@ -92,6 +99,10 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     physObj.angle = 0.0f;
     player.addComponent<ForceInput>();
 
+    auto& points = player.addComponent<Points>();
+    points.target = world.getMap().landingZones.size();
+
+    // Load Animations
     AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");
     AssetManager::loadAnimation("explosion", "../assets/animations/explosion_animations.xml");
     AssetManager::loadAnimation("asteroids", "../assets/animations/asteroid_animations.xml");
@@ -108,8 +119,23 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     playerCol.rect.w = playerDst.w;
     playerCol.rect.h = playerDst.h;
 
+    // Setup UI
+
+    auto& labelEntity(world.createEntity());
+    labelEntity.addComponent<Transform>(Vector2D(10.0f, 10.0f), 0.0f, 1.0f);
+    Label scoreLabel = {
+        "Landings: 0/" + std::to_string(points.target),
+        AssetManager::getFont("OCRA"),
+        {255, 255, 255, 255},
+        "scoreCounter",
+    };
+    TextureManager::loadLabel(scoreLabel);
+    labelEntity.addComponent<Label>(scoreLabel);
+
+    createGameOverOverlay(windowWidth, windowHeight);
+    createOverlayComponents();
+
     auto& asteroidSpawner(world.createEntity());
-    std::cout << windowWidth << std::endl;
     auto t = asteroidSpawner.addComponent<Transform>(Vector2D(3750.0f, 48.0f), 0.0f, 1.0f);
     asteroidSpawner.addComponent<TimedSpawner>(0.5f, [this, t]
     {
@@ -129,6 +155,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         Collider c = asteroid.addComponent<Collider>("asteroid", dst);
     });
 
+    // Mouse Interaction Listener
     world.getEventManager().subscribe([&](const BaseEvent& e) { // Should be made default behaviour in scene
         if (e.type != EventType::MouseInteraction) {
             return;
@@ -141,6 +168,11 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         }
 
         auto& clickable = mouseInteractionEvent.entity->getComponent<Clickable>();
+        auto& collider = mouseInteractionEvent.entity->getComponent<Collider>();
+
+        if (!collider.enabled) {
+            return;
+        }
 
         switch (mouseInteractionEvent.state) {
             case MouseInteractionState::Pressed:
@@ -184,6 +216,8 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
             {
                 auto& playerTag = entity->getComponent<PlayerTag>();
                 playerTag.withinLandingZone = false;
+                other->destroy();
+                world.getEventManager().emit(PlayerActionEvent{entity, PlayerAction::Interact});
             }
         }
     });
@@ -308,7 +342,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
         }
     });
 
-    // Player Death
+    // PlayerAction
     world.getEventManager().subscribe([&](const BaseEvent& e) {
         if (e.type != EventType::PlayerAction)
         {
@@ -317,23 +351,125 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
 
         const auto& actionEvent = static_cast<const PlayerActionEvent&>(e);
 
-        if (actionEvent.action != PlayerAction::Death)
+        if (actionEvent.action == PlayerAction::Interact)
+        {
+            auto& p = player.getComponent<Points>();
+            p.current += 1;
+
+            std::stringstream ss;
+            ss << "Landings: " << p.current << "/" << p.target;
+            auto& label = labelEntity.getComponent<Label>();
+            label.text = ss.str();
+            label.dirty = true;
+
+
+        } else if (actionEvent.action == PlayerAction::Death) {
+            if (gameOver == true)
+            {
+                return;
+            }
+            auto &playerExplosion (world.createDeferredEntity());
+            Animation explosionAnim = AssetManager::getAnimation("explosion");
+            auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
+            SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
+            SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
+            SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
+            playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
+            auto& animComponent = playerExplosion.addComponent<Animation>(explosionAnim);
+            animComponent.looping = false;
+            world.getEventManager().emit(GameStateEvent{GameState::Lose});
+        }
+    });
+
+    world.getEventManager().subscribe([&](const BaseEvent& e) {
+        if (e.type != EventType::GameState) {
+            return;
+        }
+
+        if (gameOver == true)
         {
             return;
         }
 
-        auto &playerExplosion (world.createDeferredEntity());
+        const auto& gameStateEvent = static_cast<const GameStateEvent&>(e);
 
-        Animation explosionAnim = AssetManager::getAnimation("explosion");
-        auto& playerExplosionAnim = playerExplosion.addComponent<Animation>(explosionAnim);
-        playerExplosionAnim.looping = false;
-        auto explosionT = playerExplosion.addComponent<Transform>(Vector2D(playerT.position.x, playerT.position.y), 0.0f, 1.0f);
+        if (gameStateEvent.gameState == GameState::Win) {
+            updateOverlayComponents(true);
+            toggleOverlayVisibility();
+        } else if (gameStateEvent.gameState == GameState::Lose) {
+            updateOverlayComponents(false);
+            toggleOverlayVisibility();
+        }
+        gameOver = true;
+    });
 
-        SDL_Texture* explosionTex = TextureManager::load("../assets/animations/explosion_anim.png");
+    // Player Keyboard Input
+    world.getEventManager().subscribe([&](const BaseEvent& e)
+    {
+        if (e.type != EventType::KeyboardInteraction)
+        {
+            return;
+        }
 
-        SDL_FRect explosionSrc = explosionAnim.clips[explosionAnim.currentClip].frameIndices[0];
-        SDL_FRect explosionDst {explosionT.position.x, explosionT.position.y, 64, 64};
-        playerExplosion.addComponent<Sprite>(explosionTex, explosionSrc, explosionDst);
+        if (gameOver)
+        {
+            return;
+        }
+
+        const auto& keyboardEvent = static_cast<const KeyboardInteractionEvent&>(e);
+
+        auto& fi = player.getComponent<ForceInput>();
+        if (keyboardEvent.state == KeyboardInteractionState::Pressed)
+        {
+            switch (keyboardEvent.key)
+            {
+            case SDLK_W:
+                fi.inputPositional.y = -100;
+                break;
+            case SDLK_A:
+                fi.inputPositional.x = -100;
+                break;
+            case SDLK_D:
+                fi.inputPositional.x = 100;
+                break;
+            default:
+                break;
+            }
+        }
+        else if (keyboardEvent.state == KeyboardInteractionState::Released)
+        {
+            switch (keyboardEvent.key)
+            {
+            case SDLK_W:
+                fi.inputPositional.y = 0;
+                break;
+            case SDLK_A:
+                fi.inputPositional.x = 0;
+                fi.inputAngular = 0;
+                break;
+            case SDLK_D:
+                fi.inputPositional.x = 0;
+                fi.inputAngular = 0;
+                break;
+            default:
+                break;
+            }
+        }
+    });
+
+    // GameOver player remover
+    world.getEventManager().subscribe([&](const BaseEvent& e)
+    {
+        if (gameOver)
+        {
+            player.deactivateComponent<ForceInput>();
+            player.deactivateComponent<PhysicsObject>();
+            player.deactivateComponent<Velocity>();
+            player.deactivateComponent<Acceleration>();
+            player.deactivateComponent<Sprite>();
+            player.deactivateComponent<Animation>();
+            player.deactivateComponent<Collider>();
+        }
     });
 }
 
@@ -396,4 +532,153 @@ SDL_FColor LandingScene::getBackgroundColour()
         }
     }
     return {0.0f, 0.0f, 0.0f, 1.0f};
+}
+
+void LandingScene::createGameOverOverlay(int windowWidth, int windowHeight)
+{
+    overlayEntity = &world.createEntity();
+    SDL_Texture *panelTex = TextureManager::load("../assets/martian_miner_bg.png");
+    SDL_FRect panelSrc {0, 0 , 1280.0f, 960.0f};
+    auto& overlayT = overlayEntity->addComponent<Transform>(Vector2D((float)windowWidth/2 - panelSrc.w/6, 50.0f), 0.0f, 1.0f);
+    SDL_FRect panelDst {overlayT.position.x, overlayT.position.y, panelSrc.w/3, panelSrc.h/3};
+    overlayEntity->addComponent<Sprite>(panelTex, panelSrc, panelDst, RenderLayer::UI, false);
+}
+
+void LandingScene::createOverlayComponents()
+{
+    if (!overlayEntity->hasComponent<Children>()) {
+        overlayEntity->addComponent<Children>();
+    }
+    auto& overlayTransform = overlayEntity->getComponent<Transform>();
+    auto& overlaySprite = overlayEntity->getComponent<Sprite>();
+
+    float baseX = overlayTransform.position.x;
+    float baseY = overlayTransform.position.y;
+
+    auto& restartButton = world.createEntity();
+
+    SDL_Texture *symbolsTex = TextureManager::load("../assets/ui_symbols.png");
+    SDL_FRect restartButtonSrc = {64, 0, 64, 64};
+
+    auto& restartButtonT = restartButton.addComponent<Transform>(Vector2D(baseX + overlaySprite.dst.w/2 - restartButtonSrc.w/2, baseY + overlaySprite.dst.h - 100), 0.0f, 1.0f);
+
+    SDL_FRect restartButtonDst = {restartButtonT.position.x, restartButtonT.position.y, restartButtonSrc.w, restartButtonSrc.h};
+    restartButton.addComponent<Sprite>(symbolsTex, restartButtonSrc, restartButtonDst, RenderLayer::UI, false);
+    auto& col = restartButton.addComponent<Collider>("ui", restartButtonDst);
+    col.enabled = false;
+    auto& clickable = restartButton.addComponent<Clickable>();
+    clickable.onPressed = [&restartButtonT] {
+        restartButtonT.scale = 0.75f;
+    };
+
+    clickable.onReleased = [this, &restartButtonT] {
+        restartButtonT.scale = 1.0f;
+        world.getEventManager().emit(SceneSwapEvent("game"));
+    };
+
+    clickable.onCancelled = [&restartButtonT] {
+        restartButtonT.scale = 1.0f;
+    };
+
+    restartButton.addComponent<Parent>(overlayEntity);
+    auto& parentChildren = overlayEntity->getComponent<Children>();
+
+    titleEntity = &world.createEntity();
+    titleEntity->addComponent<Transform>(Vector2D(baseX + 10, baseY + 10), 0.0f, 1.0f);
+
+    scoreEntity = &world.createEntity();
+    scoreEntity->addComponent<Transform>(Vector2D(baseX, baseY + 100), 0.0f, 1.0f);
+
+    parentChildren.children.push_back(&restartButton);
+    parentChildren.children.push_back(titleEntity);
+    parentChildren.children.push_back(scoreEntity);
+}
+
+void LandingScene::updateOverlayComponents(bool isWin) {
+    auto& overlayTransform = overlayEntity->getComponent<Transform>();
+    auto& overlaySprite = overlayEntity->getComponent<Sprite>();
+
+    float baseX = overlayTransform.position.x;
+    auto& titleT = titleEntity->getComponent<Transform>();
+    auto& scoreT = scoreEntity->getComponent<Transform>();
+
+    Label title, score;
+    if (!playerEntity)
+    {
+        for (auto& e : world.getEntities())
+        {
+            if (e->hasComponent<PlayerTag>())
+            {
+                playerEntity = e.get();
+            }
+        }
+    }
+
+    auto& [current, target] = playerEntity->getComponent<Points>();
+
+    if (isWin)
+    {
+        title = {
+            "[Mission Successful]",
+            AssetManager::getFont("OCRA-Header"),
+            {0, 255, 0, 255},
+            "winTitle",
+        };
+    }
+    else
+    {
+        title = {
+            "[Mission Failed]",
+            AssetManager::getFont("OCRA-Header"),
+            {255, 0, 0, 255},
+            "loseTitle",
+        };
+    }
+    score = {
+        std::to_string(current) + " of " + std::to_string(target) + " sites visited.",
+        AssetManager::getFont("OCRA"),
+        {255, 255, 255, 255},
+        "loseScore"
+    };
+
+    TextureManager::loadLabel(title);
+    TextureManager::loadLabel(score);
+    float w, h;
+    SDL_GetTextureSize(title.texture, &w, &h);
+
+    title.visible = false;
+    titleEntity->addComponent<Label>(title);
+    titleT.position.x = baseX + overlaySprite.dst.w/2 - w/2;
+
+    SDL_GetTextureSize(score.texture, &w, &h);
+    score.visible = false;
+    scoreEntity->addComponent<Label>(score);
+    scoreT.position.x = baseX + overlaySprite.dst.w/2 - w/2;
+}
+
+void LandingScene::toggleOverlayVisibility()
+{
+    auto &sprite = overlayEntity->getComponent<Sprite>();
+    bool newVis = !sprite.visible;
+    sprite.visible = newVis;
+
+    if (overlayEntity->hasComponent<Children>()) {
+        auto&[children] = overlayEntity->getComponent<Children>();
+        for (const auto& child : children) {
+            if (child && child->hasComponent<Sprite>()) {
+                auto& cSprite = child->getComponent<Sprite>();
+                cSprite.visible = newVis;
+            }
+            else if (child && child->hasComponent<Label>())
+            {
+                auto& cLabel = child->getComponent<Label>();
+                cLabel.visible = newVis;
+            }
+
+            if (child && child->hasComponent<Collider>()) {
+                auto& collider = child->getComponent<Collider>();
+                collider.enabled = newVis;
+            }
+        }
+    }
 }

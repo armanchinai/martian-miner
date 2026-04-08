@@ -11,6 +11,7 @@
 #include "AnimationClip.h"
 #include "Entity.h"
 #include "../utils/Vector2D.h"
+#include "SDL3_ttf/SDL_ttf.h"
 
 struct Transform
 {
@@ -105,9 +106,22 @@ struct Children {
     std::vector<Entity*> children{};
 };
 
-struct SceneState
+struct Label
 {
-    int coinsCollected = 0;
+    std::string text{};
+    TTF_Font* font = nullptr;
+    SDL_Color colour{255, 255, 255, 255};
+    std::string textureCacheKey{};
+    SDL_Texture* texture = nullptr;
+    SDL_FRect dst{};
+    bool visible = true;
+    bool dirty = true;
+};
+
+struct Points
+{
+    int current = 0;
+    int target{};
 };
 
 struct PlayerTag

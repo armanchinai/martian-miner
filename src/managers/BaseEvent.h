@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by wifir on 2026-03-30.
 //
@@ -11,12 +13,21 @@ enum class EventType {
     Collision,
     PlayerAction,
     MouseInteraction,
-    KeyboardInteraction
+    KeyboardInteraction,
+    GameState,
+    SceneSwap,
 };
 
 struct BaseEvent {
     EventType type{};
     virtual ~BaseEvent() = default;
+};
+
+struct SceneSwapEvent : BaseEvent {
+    std::string nextSceneName;
+    explicit SceneSwapEvent(std::string  nextSceneName) : nextSceneName(std::move(nextSceneName)) {
+        type = EventType::SceneSwap;
+    }
 };
 
 enum class CollisionState { Enter, Stay, Exit };
@@ -58,6 +69,15 @@ struct MouseInteractionEvent : BaseEvent {
     MouseInteractionEvent(Entity* entity, const MouseInteractionState state) : entity(entity), state(state) {
         type = EventType::MouseInteraction;
     }
+};
+
+enum class GameState { Win, Lose };
+
+struct GameStateEvent : BaseEvent {
+    GameState gameState{};
+    GameStateEvent(const GameState gameState) : gameState(gameState) {
+        type = EventType::GameState;
+    };
 };
 
 #endif //MARTIAN_MINER_BASEEVENT_H

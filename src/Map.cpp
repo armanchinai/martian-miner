@@ -132,11 +132,12 @@ void Map::draw(const Camera& camera) const
                 src.w = mapping.w;
                 src.h = mapping.h;
                 //std::cout << type << ": " << src.x << ", " << src.y << ", " << src.w << ", " << src.h << std::endl;
-                TextureManager::draw(tileTextures, src, dst);
+                TextureManager::draw(tileTextures, &src, &dst);
             }
             else //if (type != 0)
             {
-                TextureManager::draw(TextureManager::load("../assets/gizmos.png"), {65, 1, 30, 30}, dst);
+                src = {65, 1, 30, 30};
+                TextureManager::draw(TextureManager::load("../assets/gizmos.png"), &src, &dst);
             }
         }
     }

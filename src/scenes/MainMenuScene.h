@@ -11,11 +11,6 @@ class MainMenuScene : public Scene {
 public:
     MainMenuScene(const char* name, int windowWidth, int windowHeight);
     SDL_FColor getBackgroundColour() override;
-private:
-    Entity& createSettingsOverlay(int windowWidth, int windowHeight);
-    Entity& createCogButton(int windowWidth, int windowHeight, Entity& overlay);
-    void createSettingsUIComponents(Entity& overlay);
-    void toggleSettingsOverlayVisibility(Entity& overlay);
 };
 
 

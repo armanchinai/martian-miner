@@ -17,19 +17,34 @@ public:
     void render(const std::vector<std::unique_ptr<Entity>>& entities)
     {
         for (auto& e : entities) {
-            if (e->hasComponent<Transform>() && e->hasComponent<Sprite>())
+            if (e->hasComponent<Transform>())
             {
                 auto transform = e->getComponent<Transform>();
-                auto sprite = e->getComponent<Sprite>();
 
-                if (sprite.renderLayer == RenderLayer::UI)
+                if (e->hasComponent<Sprite>())
                 {
-                    sprite.dst.x = transform.position.x;
-                    sprite.dst.y = transform.position.y;
+                    auto sprite = e->getComponent<Sprite>();
+                    if (sprite.renderLayer == RenderLayer::UI)
+                    {
+                        sprite.dst.x = transform.position.x;
+                        sprite.dst.y = transform.position.y;
 
-                    if (sprite.visible) {
-                        const SDL_FRect scaledDest = RenderUtils::getScaledDest(sprite.dst, transform.scale);
-                        TextureManager::draw(sprite.texture, sprite.src, scaledDest);
+                        if (sprite.visible) {
+                            const SDL_FRect scaledDest = RenderUtils::getScaledDest(sprite.dst, transform.scale);
+                            TextureManager::draw(sprite.texture, &sprite.src, &scaledDest);
+                        }
+                    }
+                } else if (e->hasComponent<Label>())
+                {
+                    auto label = e->getComponent<Label>();
+
+                    label.dst.x = transform.position.x;
+                    label.dst.y = transform.position.y;
+
+                    if (label.visible)
+                    {
+                        const SDL_FRect scaledDest = RenderUtils::getScaledDest(label.dst, transform.scale);
+                        TextureManager::draw(label.texture, nullptr, &scaledDest);
                     }
                 }
             }

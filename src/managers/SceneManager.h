@@ -44,7 +44,22 @@ public:
         sceneParameters[sceneName] = {
             sceneName,
             [=]() {
-                return std::make_unique<SceneType>(sceneName, windowWidth, windowHeight);
+                auto scene = std::make_unique<SceneType>(sceneName, windowWidth, windowHeight);
+
+                // Access the Scene base class directly
+                Scene& base = *scene;
+                base.world.getEventManager().subscribe(
+                    [this](const BaseEvent& e) {
+                        if (e.type != EventType::SceneSwap) {
+                            return;
+                        }
+
+                        const auto& sse = static_cast<const SceneSwapEvent&>(e);
+                        changeSceneDeferred(sse.nextSceneName);
+                    }
+                );
+
+                return scene;
             },
             windowWidth,
             windowHeight
