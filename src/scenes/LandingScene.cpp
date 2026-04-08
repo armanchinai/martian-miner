@@ -51,7 +51,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     AudioManager::playLooping("thruster");
     AudioManager::muteLooping();
 
-    for (const SDL_FRect& rect : world.getMap().landingZones)
+    for (const SDL_FRect& rect : world.getMap().layers.at("LandingZoneLayer"))
     {
         auto& e = world.createEntity();
         e.addComponent<Transform>(Vector2D(rect.x, rect.y), 0.0f, 1.0f);
@@ -103,7 +103,7 @@ Scene(name, windowWidth, windowHeight, "../assets/martianValleys2.tmx", "../asse
     player.addComponent<ForceInput>();
 
     auto& points = player.addComponent<Points>();
-    points.target = world.getMap().landingZones.size();
+    points.target = world.getMap().layers.at("LandingZoneLayer").size();
 
     // Load Animations
     AssetManager::loadAnimation("player", "../assets/animations/lander_animations.xml");

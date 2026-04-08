@@ -80,29 +80,19 @@ void Map::load(const char* path, SDL_Texture *spriteSheet, std::vector<SDL_Rect>
                 colliders.push_back(c);
             }
         }
-        else if (std::strcmp(name, "ItemLayer") == 0)
+        else
         {
+            std::vector<SDL_FRect> items;
             for (
                 auto* object = nextGroup->FirstChildElement("object");
                 object != nullptr;
                 object = object->NextSiblingElement("object")
                 )
             {
-                Vector2D pos = Vector2D(object->FloatAttribute("x"), object->FloatAttribute("y"));
-                itemLocations.push_back(pos);
+                SDL_FRect rect = {object->FloatAttribute("x"), object->FloatAttribute("y"), object->FloatAttribute("width"), object->FloatAttribute("height")};
+                items.push_back(rect);
             }
-        }
-        else if (std::strcmp(name, "LandingZoneLayer") == 0)
-        {
-            for (
-                auto* object = nextGroup->FirstChildElement("object");
-                object != nullptr;
-                object = object->NextSiblingElement("object")
-                )
-            {
-                SDL_FRect zone = {object->FloatAttribute("x"), object->FloatAttribute("y"), object->FloatAttribute("width"), object->FloatAttribute("height")};
-                landingZones.push_back(zone);
-            }
+            layers.emplace(name, items);
         }
     }
 }
