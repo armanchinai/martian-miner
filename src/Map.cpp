@@ -16,6 +16,7 @@ Map::Map() = default;
 
 Map::~Map() = default;
 
+/* Loads the map from XML */
 void Map::load(const char* path, SDL_Texture *spriteSheet, std::vector<SDL_Rect> mappings)
 {
     this->tileTextures = spriteSheet;
@@ -97,6 +98,7 @@ void Map::load(const char* path, SDL_Texture *spriteSheet, std::vector<SDL_Rect>
     }
 }
 
+/* Draws the map */
 void Map::draw(const Camera& camera) const
 {
     SDL_FRect src{}, dst{};

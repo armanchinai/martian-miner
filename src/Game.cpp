@@ -22,6 +22,7 @@ Game::~Game()
     destroy();
 }
 
+/* Initializes the game */
 void Game::init(const char* title, const int width, const int height, const bool fullscreen)
 {
     int flags = 0;
@@ -75,6 +76,7 @@ void Game::init(const char* title, const int width, const int height, const bool
     sceneManager.changeSceneDeferred("menu");
 }
 
+/* Handles SDL events */
 void Game::handleEvents()
 {
     SDL_PollEvent(&event);

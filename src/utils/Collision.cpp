@@ -5,6 +5,7 @@
 #include "Collision.h"
 #include "Entity.h"
 
+/* Checks whether two axis-aligned bounding boxes (AABB) are colliding. */
 bool Collision::AABB(const SDL_FRect& rectA, const SDL_FRect& rectB)
 {
     return rectA.x + rectA.w >= rectB.x &&
@@ -13,11 +14,13 @@ bool Collision::AABB(const SDL_FRect& rectA, const SDL_FRect& rectB)
         rectB.y + rectB.h >= rectA.y;
 }
 
+/* Checks collision between two Collider components using their AABB rectangles. */
 bool Collision::AABB(const Collider& colA, const Collider& colB)
 {
     return AABB(colA.rect, colB.rect);
 }
 
+/* Extracts collision participants from a CollisionEvent based on collider tags. */
 bool Collision::getCollisionParticipants(const CollisionEvent &e, const char *entityTag, const char *otherTag, Entity *&entity, Entity *&other) {
     if (e.entityA == nullptr || e.entityB == nullptr)
     {
