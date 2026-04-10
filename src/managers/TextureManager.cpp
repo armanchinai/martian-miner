@@ -12,6 +12,7 @@ extern Game* game;
 
 std::unordered_map<std::string, SDL_Texture*> TextureManager::textures;
 
+/* Loads a texture from disk (with caching) or returns an already loaded instance. */
 SDL_Texture* TextureManager::load(const char* path)
 {
     if (const auto cachedTexture = textures.find(path); cachedTexture != textures.end())
@@ -39,16 +40,19 @@ SDL_Texture* TextureManager::load(const char* path)
     return texture;
 }
 
+/* Draws a texture using the default rotation (0 degrees). */
 void TextureManager::draw(SDL_Texture* texture, const SDL_FRect* src, const SDL_FRect* dst) {
     draw(texture, src, dst, 0);
 }
 
+/* Draws a texture to the screen with optional rotation around its center. */
 void TextureManager::draw(SDL_Texture* texture, const SDL_FRect* src, const SDL_FRect* dst, float angle)
 {
     const SDL_FPoint center = { dst->w / 2.0f, dst->h / 2.0f };
     SDL_RenderTextureRotated(game->renderer, texture, src, dst, angle, &center, SDL_FLIP_NONE);
 }
 
+/* Frees all cached textures and clears the texture map. */
 void TextureManager::clean()
 {
     for (auto& tex : textures)
@@ -59,6 +63,7 @@ void TextureManager::clean()
     textures.clear();
 }
 
+/* Loads a cached texture for a label, or generates it if it doesn't exist. */
 void TextureManager::loadLabel(Label& label)
 {
     auto it = textures.find(label.textureCacheKey);
@@ -71,6 +76,7 @@ void TextureManager::loadLabel(Label& label)
     updateLabel(label);
 }
 
+/* Rebuilds a label's texture if it has been marked as dirty (text/format changed). */
 void TextureManager::updateLabel(Label& label)
 {
     if (!label.dirty)

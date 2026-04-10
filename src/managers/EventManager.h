@@ -14,6 +14,7 @@ class EventManager
 public:
     using Handler = std::function<void(const BaseEvent&)>;
 
+    /* Emits an event to all registered listeners. */
     void emit(const BaseEvent& event) const
     {
         for (const auto& listener : listeners)
@@ -22,7 +23,7 @@ public:
         }
     }
 
-
+    /* Subscribes a new listener callback to receive emitted events. */
     void subscribe(const Handler& callback)
     {
         listeners.emplace_back(callback);

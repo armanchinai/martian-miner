@@ -49,6 +49,8 @@ class World
     AudioEventQueue audioEventQueue;
 public:
     World() = default;
+
+    /* Main game update loop */
     void update(const float deltaTime, const SDL_Event& event)
     {
         keyboardInputSystem.update(*this, event);
@@ -67,6 +69,8 @@ public:
         synchronizeEntities();
         cleanup();
     }
+
+    /* Main game render function */
     void render()
     {
         for (auto& entity : entities)
@@ -80,23 +84,28 @@ public:
         renderSystem.render(entities);
         uiRenderSystem.render(entities);
     }
+
+    /* Spawns a new entity into the world */
     Entity& createEntity()
     {
         entities.emplace_back(std::make_unique<Entity>());
         return *entities.back();
     }
 
+    /* Spawns a new entity into the world in the next frame */
     Entity& createDeferredEntity()
     {
         deferredEntities.emplace_back(std::make_unique<Entity>());
         return *deferredEntities.back();
     }
 
+    /* Returns a vector containing all entities */
     std::vector<std::unique_ptr<Entity>>& getEntities()
     {
         return entities;
     }
 
+    /* Removes all inactive entities */
     void cleanup()
     {
         std::erase_if(entities, [](const std::unique_ptr<Entity>& entity)
@@ -105,6 +114,7 @@ public:
         });
     }
 
+    /* Moves newly created entities into the main entity list. */
     void synchronizeEntities()
     {
         if (!deferredEntities.empty())
@@ -118,16 +128,19 @@ public:
         }
     }
 
+    /* Returns the EventManager */
     EventManager& getEventManager()
     {
         return eventManager;
     }
 
+    /* Returns the map */
     Map& getMap()
     {
         return map;
     }
 
+    /* Returns the AudioEventQueue */
     AudioEventQueue& getAudioEventQueue() {
         return audioEventQueue;
     }

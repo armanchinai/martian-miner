@@ -22,11 +22,6 @@ Scene::Scene(const char* sceneName, const int windowWidth, const int windowHeigh
         c.rect.y = collider.rect.y;
         c.rect.w = collider.rect.w;
         c.rect.h = collider.rect.h;
-
-        SDL_Texture* colTex = TextureManager::load("../assets/gizmos.png");
-        SDL_FRect colTexSrc = {1, 1, 30, 30};
-        SDL_FRect colTexDst = {c.rect.x, c.rect.y, c.rect.w, c.rect.h};
-        //e.addComponent<Sprite>(colTex, colTexSrc, colTexDst);
     }
 
     auto& camera(world.createEntity());
