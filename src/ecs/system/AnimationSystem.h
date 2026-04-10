@@ -11,6 +11,11 @@
 #include "Component.h"
 #include "Entity.h"
 
+/*
+ * AnimationSystem
+ *
+ * Updates animation state and frame progression for entities.
+ */
 class AnimationSystem
 {
 public:
@@ -18,12 +23,14 @@ public:
     {
         for (auto& e : entities)
         {
+            // Only process entities with an Animation component
             if (e->hasComponent<Animation>())
             {
                 auto& anim = e->getComponent<Animation>();
 
                 std::string newClip;
 
+                // Set animation clip
                 if (e->hasComponent<ForceInput>())
                 {
                     auto& fi = e->getComponent<ForceInput>();
@@ -58,9 +65,11 @@ public:
                 }
                 else
                 {
+                    // Default to idle if no input component exists
                     newClip = "idle";
                 }
 
+                // Handle clip switching
                 if (newClip != anim.currentClip)
                 {
                     anim.currentClip = newClip;
@@ -68,15 +77,22 @@ public:
                     anim.currentFrame = 0;
                 }
 
+                // Progress animation timing
                 const float animationFrameSpeed = anim.speed;
+                // Get active clip
                 auto clip = anim.clips[anim.currentClip];
+                // Accumulate elapsed time
                 anim.time += deltaTime;
 
+                // Advance to next frame if enough time elapsed
                 if ((anim.time >= animationFrameSpeed && anim.looping) ||
                     (anim.time >= animationFrameSpeed && anim.currentFrame < clip.frameIndices.size() - 1))
                 {
+                    // Recalibrate accumulated time
                     anim.time -= animationFrameSpeed;
                     const std::size_t totalAnimationFrames = clip.frameIndices.size();
+
+                    // Advance frame (wrap if looping)
                     anim.currentFrame = (anim.currentFrame + 1) % totalAnimationFrames;
                 }
             }

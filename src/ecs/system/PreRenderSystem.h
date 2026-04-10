@@ -13,6 +13,11 @@
 
 struct Label;
 
+/*
+ * PreRenderSystem
+ *
+ * Responsible for preparing renderable assets before the actual render step.
+ */
 class PreRenderSystem
 {
 public:
@@ -20,8 +25,10 @@ public:
     {
         for (const auto& e : entities)
         {
+            // Only process entities with a Label component
             if (e->hasComponent<Label>())
             {
+                // Only perform update on dirty labels.
                 if (auto& label = e->getComponent<Label>(); label.dirty)
                 {
                     TextureManager::updateLabel(label);

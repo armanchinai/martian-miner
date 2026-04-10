@@ -10,6 +10,11 @@
 #include "Component.h"
 #include "Entity.h"
 
+/*
+ * TimerSystem
+ *
+ * Responsible for updating timers and triggering timed callbacks.
+ */
 class TimerSystem
 {
 public:
@@ -17,15 +22,22 @@ public:
     {
         for (auto& entity : entities)
         {
+            // Only process entities with a Timer component
             if (entity->hasComponent<Timer>())
             {
                 auto& timer = entity->getComponent<Timer>();
+
+                // Decrease timer counter
                 timer.counter -= deltaTime;
 
+                // Check if timer has expired
                 if (timer.counter <= 0)
                 {
+                    // Reset timer for next interval
                     timer.counter = timer.interval;
+                    // Execute the associated callback
                     timer.timerCallback();
+                    // Disable the Timer component after execution if non-repeating.
                     if (timer.runOnce) {
                         entity->deactivateComponent<Timer>();
                     }

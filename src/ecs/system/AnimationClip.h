@@ -7,6 +7,12 @@
 #include <vector>
 #include <SDL3/SDL_rect.h>
 
+/*
+ * AnimationClip
+ *
+ * Represents a sequence of frames used to play an animation. Each frame is stored as an SDL_FRect. The order of frames
+ * in `frameIndices` determines the playback order.
+ */
 struct AnimationClip
 {
     std::vector<SDL_FRect> frameIndices;

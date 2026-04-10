@@ -12,6 +12,10 @@
 #include "Entity.h"
 #include "Component.h"
 
+/* MovementSystem
+ *
+ * Responsible for updating entity positions based on their velocity.
+ */
 class MovementSystem
 {
 public:
@@ -19,18 +23,23 @@ public:
     {
         for (auto& entity : entities)
         {
+            // Only process entities with position and velocity
             if (entity->hasComponent<Transform>() && entity->hasComponent<Velocity>())
             {
                 auto& t = entity->getComponent<Transform>();
                 auto& v = entity->getComponent<Velocity>();
 
+                // Only update prevPosition if movement exceeds threshold
                 float updateThreshold = 4;
                 if (std::fabs(t.prevPosition.x - t.position.x) > updateThreshold || std::fabs(t.prevPosition.y - t.position.y) > updateThreshold) {
                     t.prevPosition = t.position;
                 }
 
+                // Normalize direction
                 v.direction.normalize();
+                // Compute velocity vector
                 Vector2D velocityVector = v.direction * v.magnitude;
+                // Apply movement
                 t.position += velocityVector * deltaTime;
             }
         }

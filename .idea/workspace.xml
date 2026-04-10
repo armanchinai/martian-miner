@@ -32,7 +32,19 @@
   <component name="ChangeListManager">
     <list default="true" id="fe1d1eb7-9515-4d3b-af67-8671e60cc3ba" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ecs/system/AccelerationSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/AccelerationSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/AnimationClip.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/AnimationClip.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/AnimationSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/AnimationSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/CameraSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/CameraSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/CollisionSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/CollisionSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/DestructionSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/DestructionSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/KeyboardInputSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/KeyboardInputSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/MouseInputSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/MouseInputSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/MovementSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/MovementSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/PreRenderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/PreRenderSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/RenderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/RenderSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/ScoringSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/ScoringSystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/TimerSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/TimerSystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ecs/system/UIRenderSystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ecs/system/UIRenderSystem.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

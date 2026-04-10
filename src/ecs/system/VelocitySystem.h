@@ -11,6 +11,11 @@
 #include "Component.h"
 #include "Entity.h"
 
+/*
+ * VelocitySystem
+ *
+ * Responsible for integrating acceleration into velocity. Converts acceleration into changes in velocity over time.
+ */
 class VelocitySystem
 {
 public:
@@ -18,6 +23,7 @@ public:
     {
         for (auto& entity : entities)
         {
+            // Only process entities with both Velocity and Acceleration
             if (!entity->hasComponent<Velocity>() ||
                 !entity->hasComponent<Acceleration>())
                 continue;
@@ -25,7 +31,7 @@ public:
             auto& vel = entity->getComponent<Velocity>();
             auto& acc = entity->getComponent<Acceleration>();
 
-            // set up vectors
+            // Convert to vector form
             Vector2D velVec{
                 vel.direction.x * vel.magnitude,
                 vel.direction.y * vel.magnitude
@@ -36,15 +42,16 @@ public:
                 acc.direction.y * acc.magnitude
             };
 
-            // integrate
+            // Integrate acceleration
             velVec.x += accVec.x * deltaTime;
             velVec.y += accVec.y * deltaTime;
 
-            // convert back to mag/dir
+            // Convert back to magnitude + direction
             float mag = std::sqrt(velVec.x * velVec.x + velVec.y * velVec.y);
 
             vel.magnitude = mag;
 
+            // Catch divide by zero errors, effectively no movement below magnitude threshold.
             if (mag > 0.0001f)
             {
                 vel.direction.x = velVec.x / mag;
@@ -55,6 +62,7 @@ public:
                 vel.direction = {0.0f, 0.0f};
             }
 
+            // Reset acceleration. These forces are applied for only this frame, and are recalculated in next frame.
             acc.magnitude = 0;
             acc.direction.x = 0;
             acc.direction.y = 0;

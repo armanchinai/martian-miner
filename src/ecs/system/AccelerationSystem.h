@@ -17,12 +17,6 @@
  *
  * This system uses Newtonian physics to calculate the acceleration of entities based on the aggregation of forces
  * through unique components, as well as physics properties stored in the PhysicsObject component.
- *
- * Required Components:
- * - Acceleration: stores magnitude and direction of acceleration
- * - PhysicsObject: stores mass, angle, gravity, etc.
- * - ForceInput: stores user or AI input (rotation + thrust)
- * - Transform: used to sync rotation visually
  */
 class AccelerationSystem
 {
