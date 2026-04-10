@@ -24,9 +24,8 @@ public:
     int width{}, height{};
     int tileWidth{}, tileHeight{};
     std::vector<Collider> colliders;
-    std::vector<Vector2D> itemLocations;
-    std::vector<SDL_FRect> landingZones;
     std::vector<std::vector<int>> tileData;
+    std::unordered_map<std::string, std::vector<SDL_FRect>> layers;
 };
 
 #endif //LECTURE2_MAP_H

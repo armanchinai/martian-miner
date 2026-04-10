@@ -80,29 +80,19 @@ void Map::load(const char* path, SDL_Texture *spriteSheet, std::vector<SDL_Rect>
                 colliders.push_back(c);
             }
         }
-        else if (std::strcmp(name, "ItemLayer") == 0)
+        else
         {
+            std::vector<SDL_FRect> items;
             for (
                 auto* object = nextGroup->FirstChildElement("object");
                 object != nullptr;
                 object = object->NextSiblingElement("object")
                 )
             {
-                Vector2D pos = Vector2D(object->FloatAttribute("x"), object->FloatAttribute("y"));
-                itemLocations.push_back(pos);
+                SDL_FRect rect = {object->FloatAttribute("x"), object->FloatAttribute("y"), object->FloatAttribute("width"), object->FloatAttribute("height")};
+                items.push_back(rect);
             }
-        }
-        else if (std::strcmp(name, "LandingZoneLayer") == 0)
-        {
-            for (
-                auto* object = nextGroup->FirstChildElement("object");
-                object != nullptr;
-                object = object->NextSiblingElement("object")
-                )
-            {
-                SDL_FRect zone = {object->FloatAttribute("x"), object->FloatAttribute("y"), object->FloatAttribute("width"), object->FloatAttribute("height")};
-                landingZones.push_back(zone);
-            }
+            layers.emplace(name, items);
         }
     }
 }
@@ -132,11 +122,12 @@ void Map::draw(const Camera& camera) const
                 src.w = mapping.w;
                 src.h = mapping.h;
                 //std::cout << type << ": " << src.x << ", " << src.y << ", " << src.w << ", " << src.h << std::endl;
-                TextureManager::draw(tileTextures, src, dst);
+                TextureManager::draw(tileTextures, &src, &dst);
             }
             else //if (type != 0)
             {
-                TextureManager::draw(TextureManager::load("../assets/gizmos.png"), {65, 1, 30, 30}, dst);
+                src = {65, 1, 30, 30};
+                TextureManager::draw(TextureManager::load("../assets/gizmos.png"), &src, &dst);
             }
         }
     }

@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by wifir on 2026-03-30.
 //
@@ -10,12 +12,22 @@ class Entity;
 enum class EventType {
     Collision,
     PlayerAction,
+    MouseInteraction,
+    KeyboardInteraction,
     GameState,
+    SceneSwap,
 };
 
 struct BaseEvent {
     EventType type{};
     virtual ~BaseEvent() = default;
+};
+
+struct SceneSwapEvent : BaseEvent {
+    std::string nextSceneName;
+    explicit SceneSwapEvent(std::string  nextSceneName) : nextSceneName(std::move(nextSceneName)) {
+        type = EventType::SceneSwap;
+    }
 };
 
 enum class CollisionState { Enter, Stay, Exit };
@@ -36,7 +48,27 @@ struct PlayerActionEvent : BaseEvent {
     PlayerAction action{};
     PlayerActionEvent(Entity* player, const PlayerAction action) : player(player), action(action) {
         type = EventType::PlayerAction;
-    };
+    }
+};
+
+enum class KeyboardInteractionState { Pressed, Released };
+
+struct KeyboardInteractionEvent : BaseEvent {
+    SDL_Keycode key;
+    KeyboardInteractionState state{};
+    KeyboardInteractionEvent(const SDL_Keycode key, const KeyboardInteractionState state) : key(key), state(state) {
+        type = EventType::KeyboardInteraction;
+    }
+};
+
+enum class MouseInteractionState { Pressed, Released, Cancelled };
+
+struct MouseInteractionEvent : BaseEvent {
+    Entity* entity = nullptr;
+    MouseInteractionState state{};
+    MouseInteractionEvent(Entity* entity, const MouseInteractionState state) : entity(entity), state(state) {
+        type = EventType::MouseInteraction;
+    }
 };
 
 enum class GameState { Win, Lose };

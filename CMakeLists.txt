@@ -5,13 +5,15 @@ set(CMAKE_CXX_STANDARD 20)
 
 #Set SDL3 include and lib paths
 if (WIN32)
-    set(SDL3_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3-3.2.20")
+    set(SDL3_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3-3.4.4")
     set(SDL3_IMAGE_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3_image-3.2.4")
     set(SDL3_MIXER_PATH "${PROJECT_SOURCE_DIR}/src/vendor/sdl3_mixer 3.1.0")
+    set(SDL3_TTF_PATH "${PROJECT_SOURCE_DIR}/src/vendor/SDL3_ttf-3.2.2")
     include_directories(
             ${SDL3_PATH}/include
             ${SDL3_IMAGE_PATH}/include
             ${SDL3_MIXER_PATH}/include
+            ${SDL3_TTF_PATH}/include
             ${PROJECT_SOURCE_DIR}/src
             ${PROJECT_SOURCE_DIR}/src/ecs
             ${PROJECT_SOURCE_DIR}/src/ecs/system
@@ -21,7 +23,8 @@ if (WIN32)
     link_directories(
             ${SDL3_PATH}/lib
             ${SDL3_IMAGE_PATH}/lib
-            ${SDL3_MIXER}/lib
+            ${SDL3_MIXER_PATH}/lib
+            ${SDL3_TTF_PATH}/lib
     )
 endif ()
 
@@ -53,7 +56,6 @@ add_executable(martian-miner src/main.cpp
         src/managers/AssetManager.cpp
         src/ecs/system/AnimationSystem.h
         src/ecs/system/CameraSystem.h
-        src/ecs/system/SpawnTimerSystem.h
         src/ecs/system/DestructionSystem.h
         src/managers/Scene.h
         src/managers/Scene.cpp
@@ -65,9 +67,23 @@ add_executable(martian-miner src/main.cpp
         src/managers/BaseEvent.h
         src/ecs/system/ScoringSystem.h
         src/ecs/system/ScoringSystem.cpp
+        src/utils/RenderUtils.h
+        src/ecs/system/UIRenderSystem.h
+        src/ecs/system/MouseInputSystem.h
+        src/ecs/system/MouseInputSystem.cpp
+        src/scenes/MainMenuScene.cpp
+        src/scenes/MainMenuScene.h
+        src/ecs/system/KeyboardInputSystem.cpp
+        src/ecs/system/PreRenderSystem.h
+        src/managers/AudioManager.h
+        src/managers/AudioManager.cpp
+        src/managers/AudioEventQueue.h
+        src/ecs/system/TimerSystem.h
 )
 
 target_link_libraries(martian-miner
         SDL3
         SDL3_IMAGE
+        SDL3_TTF
+        SDL3_mixer
 )

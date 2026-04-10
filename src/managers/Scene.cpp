@@ -48,3 +48,38 @@ Scene::Scene(const char* sceneName, const int windowWidth, const int windowHeigh
     camView.h = windowHeight;
     camera.addComponent<Camera>(camView, world.getMap().width * 32.0f, world.getMap().height * 32.0f);
 }
+
+void Scene::onCollision(const CollisionEvent &collisionEvent) { }
+
+void Scene::onPlayerAction(const PlayerActionEvent &playerActionEvent) { }
+
+void Scene::onMouseInteraction(const MouseInteractionEvent &mouseInteractionEvent) {
+    if (!mouseInteractionEvent.entity->hasComponent<Clickable>()) {
+        return;
+    }
+
+    if (mouseInteractionEvent.entity->hasComponent<Collider>()) {
+        if (auto& collider = mouseInteractionEvent.entity->getComponent<Collider>(); !collider.enabled) {
+            return;
+        }
+    }
+
+    auto& clickable = mouseInteractionEvent.entity->getComponent<Clickable>();
+
+    switch (mouseInteractionEvent.state) {
+        case MouseInteractionState::Pressed:
+            clickable.onPressed();
+            break;
+        case MouseInteractionState::Released:
+            clickable.onReleased();
+            break;
+        case MouseInteractionState::Cancelled:
+            clickable.onCancelled();
+            break;
+        default:
+            break;
+    }
+}
+
+void Scene::onKeyboardInteraction(const KeyboardInteractionEvent &keyboardInteractionEvent) { }
+void Scene::onGameStateChanged(const GameStateEvent &gameStateEvent) { }

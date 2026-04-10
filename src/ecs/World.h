@@ -16,12 +16,15 @@
 #include "../managers/EventManager.h"
 #include "KeyboardInputSystem.h"
 #include "Map.h"
+#include "MouseInputSystem.h"
 #include "MovementSystem.h"
+#include "PreRenderSystem.h"
 #include "RenderSystem.h"
 #include "ScoringSystem.h"
-#include "SpawnTimerSystem.h"
+#include "TimerSystem.h"
+#include "UIRenderSystem.h"
 #include "VelocitySystem.h"
-#include "managers/AssetManager.h"
+#include "managers/AudioEventQueue.h"
 
 class World
 {
@@ -35,25 +38,32 @@ class World
     EventManager eventManager;
     AnimationSystem animationSystem;
     CameraSystem cameraSystem;
-    SpawnTimerSystem spawnTimerSystem;
+    TimerSystem timerSystem;
     DestructionSystem destructionSystem;
     AccelerationSystem accelerationSystem;
     VelocitySystem velocitySystem;
+    UIRenderSystem uiRenderSystem;
+    MouseInputSystem mouseInputSystem;
     ScoringSystem scoringSystem;
+    PreRenderSystem preRenderSystem;
+    AudioEventQueue audioEventQueue;
 public:
     World() = default;
     void update(const float deltaTime, const SDL_Event& event)
     {
-        keyboardInputSystem.update(entities, event);
+        keyboardInputSystem.update(*this, event);
+        mouseInputSystem.update(*this, event);
         accelerationSystem.update(entities, deltaTime);
         velocitySystem.update(entities, deltaTime);
         movementSystem.update(entities, deltaTime);
         collisionSystem.update(*this);
         animationSystem.update(entities, deltaTime);
         cameraSystem.update(entities);
-        spawnTimerSystem.update(entities, deltaTime);
+        timerSystem.update(entities, deltaTime);
         destructionSystem.update(entities);
         scoringSystem.checkScore(*this, entities);
+        audioEventQueue.process();
+        preRenderSystem.update(entities);
         synchronizeEntities();
         cleanup();
     }
@@ -68,6 +78,7 @@ public:
             }
         }
         renderSystem.render(entities);
+        uiRenderSystem.render(entities);
     }
     Entity& createEntity()
     {
@@ -115,6 +126,10 @@ public:
     Map& getMap()
     {
         return map;
+    }
+
+    AudioEventQueue& getAudioEventQueue() {
+        return audioEventQueue;
     }
 };
 

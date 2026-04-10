@@ -9,6 +9,7 @@
 #include "tinyxml2.h"
 
 std::unordered_map<std::string, Animation> AssetManager::animations;
+std::unordered_map<std::string, TTF_Font*> AssetManager::fonts;
 
 void AssetManager::loadAnimation(const std::string& clipName, const char* path)
 {
@@ -60,4 +61,14 @@ Animation AssetManager::loadAnimationFromXML(const char* path)
     }
 
     return anim;
+}
+
+void AssetManager::loadFont(const std::string& fontName, const char* path, float fontSize)
+{
+    fonts.emplace(fontName, TTF_OpenFont(path, fontSize));
+}
+
+TTF_Font* AssetManager::getFont(const std::string& fontName)
+{
+    return fonts.at(fontName);
 }

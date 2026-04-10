@@ -28,13 +28,6 @@ public:
         listeners.emplace_back(callback);
     }
 private:
-    // template<typename EventType>
-    // std::vector<std::function<void(const EventType&)>>& getListeners()
-    // {
-    //     static std::vector<std::function<void(const EventType&)>> listeners;
-    //     return listeners;
-    // }
-
     std::vector<Handler> listeners;
 };
 

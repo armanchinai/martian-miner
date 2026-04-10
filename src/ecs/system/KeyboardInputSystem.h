@@ -11,55 +11,12 @@
 #include "Component.h"
 #include "Entity.h"
 
+class World;
+
 class KeyboardInputSystem
 {
 public:
-    void update(const std::vector<std::unique_ptr<Entity>>& entities, const SDL_Event& event)
-    {
-        for (auto& e : entities)
-        {
-            if (e->hasComponent<ForceInput>() && e->hasComponent<PlayerTag>())
-            {
-                auto& fi = e->getComponent<ForceInput>();
-                if (event.type == SDL_EVENT_KEY_DOWN)
-                {
-                    switch (event.key.key)
-                    {
-                    case SDLK_W:
-                        fi.inputPositional.y = -100;
-                        break;
-                    case SDLK_A:
-                        fi.inputPositional.x = -100;
-                        break;
-                    case SDLK_D:
-                        fi.inputPositional.x = 100;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                else if (event.type == SDL_EVENT_KEY_UP)
-                {
-                    switch (event.key.key)
-                    {
-                    case SDLK_W:
-                        fi.inputPositional.y = 0;
-                        break;
-                    case SDLK_A:
-                        fi.inputPositional.x = 0;
-                            fi.inputAngular = 0;
-                        break;
-                    case SDLK_D:
-                        fi.inputPositional.x = 0;
-                            fi.inputAngular = 0;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    void update(World& world, const SDL_Event& event);
 };
 
 #endif //LECTURE4_KEYBOARDINPUTSYSTEM_H

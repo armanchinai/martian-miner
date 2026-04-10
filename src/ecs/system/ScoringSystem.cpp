@@ -16,7 +16,6 @@ void ScoringSystem::checkScore(World &world, const std::vector<std::unique_ptr<E
             if (points.current == points.target) {
                 world.getEventManager().emit(GameStateEvent{GameState::Win});
             }
-            std::cout << points.current << std::endl;
         }
     }
 }

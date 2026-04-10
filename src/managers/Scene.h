@@ -36,6 +36,12 @@ public:
 
     virtual SDL_FColor getBackgroundColour() { return {0.0f, 0.0f, 0.0f, 1.0f}; }
 
+    virtual void onCollision(const CollisionEvent& collisionEvent);
+    virtual void onPlayerAction(const PlayerActionEvent& playerAction);
+    virtual void onMouseInteraction(const MouseInteractionEvent& mouseInteraction);
+    virtual void onKeyboardInteraction(const KeyboardInteractionEvent& keyboardInteraction);
+    virtual void onGameStateChanged(const GameStateEvent& gameStateChangedEvent);
+
 private:
     std::string name;
     int width;

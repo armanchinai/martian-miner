@@ -9,7 +9,9 @@
 #include <SDL3/SDL_render.h>
 
 #include "AnimationClip.h"
+#include "Entity.h"
 #include "../utils/Vector2D.h"
+#include "SDL3_ttf/SDL_ttf.h"
 
 struct Transform
 {
@@ -42,11 +44,19 @@ struct Velocity
     float magnitude{};
 };
 
+enum class RenderLayer
+{
+    World,
+    UI
+};
+
 struct Sprite
 {
     SDL_Texture* texture = nullptr;
     SDL_FRect src{};
     SDL_FRect dst{};
+    RenderLayer renderLayer = RenderLayer::World;
+    bool visible = true;
 };
 
 struct Collider
@@ -54,6 +64,7 @@ struct Collider
     std::string tag;
     SDL_FRect rect{};
     bool isColliding;
+    bool enabled = true;
 };
 
 struct Animation
@@ -63,6 +74,7 @@ struct Animation
     float time{};
     int currentFrame{};
     float speed = 0.1f;
+    bool looping = true;
 };
 
 struct Camera
@@ -72,11 +84,38 @@ struct Camera
     float worldHeight;
 };
 
-struct TimedSpawner
+struct Timer {
+    float interval;
+    std::function<void()> timerCallback;
+    bool runOnce = false;
+    float counter;
+};
+
+struct Clickable {
+    std::function<void()> onPressed{};
+    std::function<void()> onReleased{};
+    std::function<void()> onCancelled{};
+    bool pressed = false;
+};
+
+struct Parent {
+    Entity* parent = nullptr;
+};
+
+struct Children {
+    std::vector<Entity*> children{};
+};
+
+struct Label
 {
-    float spawnInterval;
-    std::function<void()> spawnCallback;
-    float timer;
+    std::string text{};
+    TTF_Font* font = nullptr;
+    SDL_Color colour{255, 255, 255, 255};
+    std::string textureCacheKey{};
+    SDL_Texture* texture = nullptr;
+    SDL_FRect dst{};
+    bool visible = true;
+    bool dirty = true;
 };
 
 struct Points

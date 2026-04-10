@@ -35,16 +35,19 @@ public:
             {
                 auto& t = entity->getComponent<Transform>();
                 auto& sprite = entity->getComponent<Sprite>();
-                sprite.dst.x = t.position.x - camera.view.x;
-                sprite.dst.y = t.position.y - camera.view.y;
 
-                if (entity->hasComponent<Animation>())
-                {
-                    auto& anim = entity->getComponent<Animation>();
-                    sprite.src = anim.clips[anim.currentClip].frameIndices[anim.currentFrame];
+                if (sprite.renderLayer == RenderLayer::World) {
+                    sprite.dst.x = t.position.x - camera.view.x;
+                    sprite.dst.y = t.position.y - camera.view.y;
+
+                    if (entity->hasComponent<Animation>())
+                    {
+                        auto& anim = entity->getComponent<Animation>();
+                        sprite.src = anim.clips[anim.currentClip].frameIndices[anim.currentFrame];
+                    }
+
+                    TextureManager::draw(sprite.texture, &sprite.src, &sprite.dst, t.rotation);
                 }
-
-                TextureManager::draw(sprite.texture, sprite.src, sprite.dst, t.rotation);
             }
         }
     }

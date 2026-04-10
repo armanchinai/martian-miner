@@ -1,0 +1,19 @@
+//
+// Created by wifir on 2026-04-06.
+//
+
+#ifndef MARTIAN_MINER_MENUSCENE_H
+#define MARTIAN_MINER_MENUSCENE_H
+#include "../managers/Scene.h"
+
+
+class MainMenuScene : public Scene {
+public:
+    MainMenuScene(const char* name, int windowWidth, int windowHeight);
+    SDL_FColor getBackgroundColour() override;
+    void onMouseInteraction(const MouseInteractionEvent& mouseInteraction) override;
+};
+
+
+
+#endif //MARTIAN_MINER_MENUSCENE_H
