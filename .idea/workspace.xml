@@ -31,13 +31,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fe1d1eb7-9515-4d3b-af67-8671e60cc3ba" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/COMP-8051_Architecture.drawio.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/managers/AssetManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/AssetManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/managers/AudioManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/AudioManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/managers/EventManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/EventManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/managers/Scene.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/Scene.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/managers/SceneManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/SceneManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/managers/TextureManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/managers/TextureManager.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +143,8 @@
       <workItem from="1775010816758" duration="2153000" />
       <workItem from="1775025084700" duration="5887000" />
       <workItem from="1775430842088" duration="3409000" />
-      <workItem from="1775792024268" duration="1091000" />
+      <workItem from="1775792024268" duration="1427000" />
+      <workItem from="1775798952888" duration="669000" />
     </task>
     <servers />
   </component>
