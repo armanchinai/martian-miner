@@ -63,7 +63,6 @@ struct Collider
 {
     std::string tag;
     SDL_FRect rect{};
-    bool isColliding;
     bool enabled = true;
 };
 
